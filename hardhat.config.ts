@@ -1,8 +1,7 @@
 import 'dotenv/config';
-import {HardhatUserConfig} from 'hardhat/types';
+import { HardhatUserConfig } from 'hardhat/types';
 
-import '@nomicfoundation/hardhat-chai-matchers';
-import '@nomicfoundation/hardhat-ethers';
+import '@nomiclabs/hardhat-ethers';
 import '@typechain/hardhat';
 import 'hardhat-gas-reporter';
 import 'solidity-coverage';
@@ -11,7 +10,7 @@ import 'hardhat-deploy';
 import 'hardhat-deploy-ethers';
 import 'hardhat-deploy-tenderly';
 
-import {node_url, accounts, addForkConfiguration} from './utils/network';
+import { node_url, accounts, addForkConfiguration } from './utils/network';
 
 const config: HardhatUserConfig = {
 	solidity: {
@@ -79,13 +78,13 @@ const config: HardhatUserConfig = {
 	},
 	external: process.env.HARDHAT_FORK
 		? {
-				deployments: {
-					// process.env.HARDHAT_FORK will specify the network that the fork is made from.
-					// these lines allow it to fetch the deployments from the network being forked from both for node and deploy task
-					hardhat: ['deployments/' + process.env.HARDHAT_FORK],
-					localhost: ['deployments/' + process.env.HARDHAT_FORK],
-				},
-		  }
+			deployments: {
+				// process.env.HARDHAT_FORK will specify the network that the fork is made from.
+				// these lines allow it to fetch the deployments from the network being forked from both for node and deploy task
+				hardhat: ['deployments/' + process.env.HARDHAT_FORK],
+				localhost: ['deployments/' + process.env.HARDHAT_FORK],
+			},
+		}
 		: undefined,
 
 	tenderly: {

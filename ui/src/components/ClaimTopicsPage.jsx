@@ -1,108 +1,138 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react';
+import { Button, Checkbox, Modal, Input } from 'antd';
 
-const ClaimTopicsPage = () => {
-  const [topics, setTopics] = useState([])
-  const [newTopic, setNewTopic] = useState('')
-  const [selectedTopics, setSelectedTopics] = useState([])
-  const [isModalVisible, setIsModalVisible] = useState(false)
 
-  const handleAddTopic = () => {
-    if (newTopic !== '') {
-      setTopics([...topics, newTopic])
-      setNewTopic('')
-    }
-  }
-
-  const handleRemoveTopics = () => {
-    setTopics(topics.filter(topic => !(selectedTopics.includes(topic))))
-    setSelectedTopics([])
-    setIsModalVisible(false)
-  }
+const ClaimTopicListItem = ({ item, setSelectedTopics }) => {
+  const [isChecked, setIsChecked] = useState(false);
 
   return (
-    <div class="text-blue-500">
-      <button 
-        onClick={() => setIsModalVisible(true)} 
-        class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-      >
-        Add Claim Topic
-      </button>
-      {topics.length > 0 &&
-        <button
-          onClick={() => setIsModalVisible(true)} 
-          class="ml-4 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-        >
-          Remove Claim Topic(s)
-        </button>
-      }
-      <ClaimTopicsList topics={topics} setSelectedTopics={setSelectedTopics}/>
-      <AddClaimTopicDialog newTopic={newTopic}
-                           setNewTopic={setNewTopic}
-                           handleAddTopic={handleAddTopic}/>
-      {isModalVisible &&
-        <RemoveClaimTopicDialog handleRemoveTopics={handleRemoveTopics}/>
-      }
+    <div className="flex items-center">
+      <Checkbox
+        className="mr-4"
+        checked={isChecked}
+        onChange={() => {
+          setIsChecked(!isChecked);
+          setSelectedTopics((prevState) =>
+            isChecked ? prevState.filter((topic) => topic !== item) : [...prevState, item]
+          );
+        }}
+      />
+      {item}
     </div>
-  )
+  );
 }
 
-const ClaimTopicsList = ({ topics, setSelectedTopics }) => (
-  <ul class="list-decimal list-inside m-4">
-    {topics.map((item, index) => 
-      <ClaimTopicListItem key={index} item={item} setSelectedTopics={setSelectedTopics}/>
-    )}
-  </ul>
-)
-
-const ClaimTopicListItem = ({ item, setSelectedTopics }) => (
-  <li class="m-2">
-    <input 
-      class="mr-2 leading-tight"
-      type="checkbox" 
-      onChange={(e) => setSelectedTopics(prevState => {
-        if (e.target.checked) {
-          return [...prevState, item]
-        } else {
-          return prevState.filter(topic => topic !== item)
-        }
-      })}
-    />
-    <span class="text-blue-700">{item}</span>
-  </li>
-)
-
-const AddClaimTopicDialog = ({ newTopic, setNewTopic, handleAddTopic }) => (
-  // Note: Tailwind does not provide modal/dialog out of the box. You might need to use libraries like Headless UI
-  <div>
-    <h2 class="text-blue-700 text-lg font-semibold">Add Claim Topic</h2>
-    <input 
-      type="text"
-      value={newTopic} 
-      onChange={e => setNewTopic(e.target.value)}
-      placeholder="Enter claim topic"
-      class="shadow appearance-none border rounded w-full py-2 px-3 text-blue-700 leading-tight focus:outline-none focus:shadow-outline"
-    />
-    <button 
-      onClick={handleAddTopic}
-      class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+const AddClaimTopicDialog = ({ visible, newTopic, setNewTopic, handleAddTopic, onCancel }) => {
+  return (
+    <Modal
+      title="Add Claim Topic"
+      visible={visible}
+      onCancel={onCancel}
+      onOk={handleAddTopic}
     >
-      Add
-    </button>
-  </div>
-)
+      <Input
+        value={newTopic}
+        onChange={(e) => setNewTopic(e.target.value)}
+      />
+    </Modal>
+  );
+}
 
-const RemoveClaimTopicDialog = ({ handleRemoveTopics }) => (
-  // Note: Tailwind does not provide modal/dialog out of the box. You might need to use libraries like Headless UI
-  <div>
-    <h2 class="text-blue-700 text-lg font-semibold">Remove Claim Topic(s)</h2>
-    <p class="text-blue-700">Are you sure you want to remove the selected topic(s)?</p>
-    <button 
-      onClick={handleRemoveTopics}
-      class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+const RemoveClaimTopicDialog = ({ visible, handleRemoveTopics, onCancel }) => {
+  return (
+    <Modal
+      title="Confirm Removal"
+      visible={visible}
+      onCancel={onCancel}
+      onOk={handleRemoveTopics}
     >
-      Remove
-    </button>
-  </div>
-)
+      Are you sure you want to remove the selected claim topics?
+    </Modal>
+  );
+}
 
-export default ClaimTopicsPage
+const ClaimTopicsPage = ({ service }) => {
+  const [topics, setTopics] = useState([]);
+  const [newTopic, setNewTopic] = useState('');
+  const [selectedTopics, setSelectedTopics] = useState([]);
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  const [removeModalVisible, setRemoveModalVisible] = useState(false);
+
+  // Fetch initial topics
+  useEffect(() => {
+    async function fetchTopics() {
+      const fetchedTopics = await service.getClaimTopics();
+      setTopics(fetchedTopics);
+    }
+
+    fetchTopics();
+  }, [service]);
+
+  // Setup event listeners
+  useEffect(() => {
+    service.onClaimTopicAdded && service.onClaimTopicAdded((claimTopic) => {
+      setTopics((prevState) => [...prevState, claimTopic]);
+    });
+
+    service.onClaimTopicRemoved && service.onClaimTopicRemoved((claimTopic) => {
+      setTopics((prevState) => prevState.filter((topic) => topic !== claimTopic));
+    });
+
+    return () => {
+      // Clean up event listeners
+      service.contract && service.contract.removeAllListeners('ClaimTopicAdded');
+      service.contract && service.contract.removeAllListeners('ClaimTopicRemoved');
+    };
+  }, [service]);
+
+  const handleAddTopic = async () => {
+    if (newTopic !== '') {
+      await service.addClaimTopic(newTopic);
+      setNewTopic('');
+      setAddModalVisible(false);
+    }
+  };
+
+  const handleRemoveTopics = async () => {
+    for (const topic of selectedTopics) {
+      await service.removeClaimTopic(topic);
+    }
+    setSelectedTopics([]);
+    setRemoveModalVisible(false);
+  };
+
+  return (
+    <div>
+      <Button type="primary" onClick={() => setAddModalVisible(true)}>
+        Add Claim Topic
+      </Button>
+      {topics.length > 0 && (
+        <Button
+          type="primary"
+          onClick={() => setRemoveModalVisible(true)}
+          style={{ marginLeft: '10px' }}
+        >
+          Remove Claim Topic(s)
+        </Button>
+      )}
+      {topics.map((topic, index) => (
+        <ClaimTopicListItem key={index} item={topic} setSelectedTopics={setSelectedTopics} />
+      ))}
+      <AddClaimTopicDialog
+        visible={addModalVisible}
+        newTopic={newTopic}
+        setNewTopic={setNewTopic}
+        handleAddTopic={handleAddTopic}
+        onCancel={() => setAddModalVisible(false)}
+      />
+      <RemoveClaimTopicDialog
+        visible={removeModalVisible}
+        handleRemoveTopics={handleRemoveTopics}
+        onCancel={() => setRemoveModalVisible(false)}
+      />
+    </div>
+  );
+};
+
+
+export default ClaimTopicsPage;

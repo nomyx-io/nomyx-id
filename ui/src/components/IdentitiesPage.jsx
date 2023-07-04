@@ -1,25 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { List, Button, Modal, Input, Checkbox } from 'antd';
 
-const IdentitiesPage = () => {
+const IdentitiesPage = ({ service }) => {
     const [identities, setIdentities] = useState([]);
     const [selectedIdentities, setSelectedIdentities] = useState([]);
     const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
     const [isRemoveDialogVisible, setIsRemoveDialogVisible] = useState(false);
 
     useEffect(() => {
-        // Fetch identities from your contract here and update state
-        // setIdentities(your_identities)
-    }, []); 
+        const fetchIdentities = async () => {
+            const identities = await service.getRegistryUsers();
+            setIdentities(identities);
+        };
 
-    const handleAddIdentity = (identity) => {
+        fetchIdentities();
+    }, [service]);
+
+    const handleAddIdentity = async (identity) => {
         // Add the identity through your contract here
         // upon success, update the identities state
+        const signer = service.provider.getSigner();
+        const identityData = {}; // set up the identityData object as per your requirement
+        await service.addIdentity(signer, identity, identityData);
+        const newIdentities = await service.getRegistryUsers();
+        setIdentities(newIdentities);
     };
 
-    const handleRemoveIdentity = () => {
+    const handleRemoveIdentity = async () => {
         // Remove the selected identities through your contract here
         // upon success, update the identities state
+        const signer = service.provider.getSigner();
+        for (const identity of selectedIdentities) {
+            await service.removeIdentity(signer, identity);
+        }
+        const newIdentities = await service.getRegistryUsers();
+        setIdentities(newIdentities);
         setSelectedIdentities([]);
     };
     return (
@@ -29,19 +44,20 @@ const IdentitiesPage = () => {
             <Button className={`mb-4 py-2 px-4 rounded ${selectedIdentities.length === 0 ? 'bg-gray-200' : 'bg-red-500 text-white'}`} onClick={() => setIsRemoveDialogVisible(true)} disabled={selectedIdentities.length === 0}>Remove Identity</Button>
             <AddIdentityDialog visible={isAddDialogVisible} onAddIdentity={handleAddIdentity} onCancel={() => setIsAddDialogVisible(false)} />
             <RemoveIdentityDialog visible={isRemoveDialogVisible} onRemoveIdentity={handleRemoveIdentity} onCancel={() => setIsRemoveDialogVisible(false)} />
-            <IdentitiesList 
-                identities={identities} 
+            <IdentitiesList
+                identities={identities}
                 selectedIdentities={selectedIdentities}
-                onSelectedIdentitiesChange={(selected) => setSelectedIdentities(selected)} 
+                onSelectedIdentitiesChange={(selected) => setSelectedIdentities(selected)}
             />
         </>
     );
 };
 
+
 const IdentitiesList = ({ identities = [], selectedIdentities, onSelectedIdentitiesChange }) => (
     <List
         dataSource={identities}
-        renderItem={(item) => <IdentityListItem identity={item} isSelected={selectedIdentities.includes(item)} onSelect={onSelectedIdentitiesChange}  />}
+        renderItem={(item) => <IdentityListItem identity={item} isSelected={selectedIdentities.includes(item)} onSelect={onSelectedIdentitiesChange} />}
     />
 );
 

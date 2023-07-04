@@ -7,6 +7,7 @@ import { IIdentity } from "../interfaces/IIdentity.sol";
 /// @notice This contract represents an identity of a user
 /// @dev This contract is used to store the claims of a user
 contract Identity is IIdentity {
+	
 	mapping(bytes32 => Key) keys;
 	mapping(uint256 => bytes32[]) keysByPurpose;
 
@@ -99,11 +100,12 @@ contract Identity is IIdentity {
 	}
 
 	mapping(bytes32 => Claim) internal claims;
-	mapping(uint256 => bytes32[]) internal claimsByTopic;
+	bytes32[] internal claimIds;
 
-	function getClaim(
-		bytes32 _claimId
-	)
+	mapping(uint256 => bytes32[]) internal claimsByTopic;
+	bytes32[] internal claimTopics;
+
+	function getClaim(bytes32 _claimId)
 		external
 		view
 		override
@@ -114,14 +116,13 @@ contract Identity is IIdentity {
 			bytes memory signature,
 			bytes memory data,
 			string memory uri
-		)
-	{
+		) {
 		Claim storage claim = claims[_claimId];
 		return (claim.topic, claim.scheme, claim.issuer, claim.signature, claim.data, claim.uri);
 	}
 
-	function getClaimIdsByTopic(uint256 _topic) external view override returns (bytes32[] memory claimIds) {
-		return claimsByTopic[_topic];
+	function getClaimIdsByTopic(uint256 _topic) external view override returns (bytes32[] memory claimIds_) {
+		claimIds_ = claimsByTopic[_topic];
 	}
 
 	function addClaim(
@@ -143,6 +144,10 @@ contract Identity is IIdentity {
 		claim.uri = _uri;
 
 		claimsByTopic[_topic].push(claimId);
+		claimTopics.push(claimId);
+
+		claims[claimId] = claim;
+		claimIds.push(claimId);
 
 		emit ClaimAdded(claimId, _topic, _scheme, _issuer, _signature, _data, _uri);
 
@@ -150,35 +155,22 @@ contract Identity is IIdentity {
 	}
 
 	function changeClaim(
-		bytes32 _claimId,
-		uint256 _topic,
-		uint256 _scheme,
-		address _issuer,
-		bytes memory _signature,
-		bytes memory _data,
-		string memory _uri
-	) external override returns (bool success) {
-		Claim storage claim = claims[_claimId];
-		require(claim.issuer != address(0), "Claim does not exist");
-
-		claim.topic = _topic;
-		claim.scheme = _scheme;
-		claim.signature = _signature;
-		claim.data = _data;
-		claim.uri = _uri;
-
-		emit ClaimChanged(_claimId, _topic, _scheme, _issuer, _signature, _data, _uri);
-
-		return true;
+		bytes32,
+		uint256,
+		uint256,
+		address,
+		bytes memory,
+		bytes memory,
+		string memory
+	) external pure override returns (bool) {
+		require(false, "Not implemented");
 	}
 
 	function removeClaim(bytes32 _claimId) external override returns (bool success) {
 		Claim storage claim = claims[_claimId];
 		require(claim.issuer != address(0), "Claim does not exist");
-
 		delete claims[_claimId];
 		emit ClaimRemoved(_claimId, claim.topic, claim.scheme, claim.issuer, claim.signature, claim.data, claim.uri);
-
 		return true;
 	}
 
@@ -194,4 +186,14 @@ contract Identity is IIdentity {
 		override
 		returns (address to, uint256 value, bytes memory data, bool approved, uint256 executionType)
 	{}
+
+	 function getClaimTopics() external view override returns (uint256[] memory) {
+		 uint256[] memory _claimTopics = new uint256[](claimTopics.length);
+		 for (uint256 i = 0; i < claimTopics.length; i++) {
+			 _claimTopics[i] = claims[claimTopics[i]].topic;
+		 }
+		 return _claimTopics;
+	 }
+
+	 function isVerified() external view returns (bool) {}
 }
