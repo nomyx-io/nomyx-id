@@ -1,0 +1,11 @@
+{
+  "1337": {
+    "factory": "0x09635F643e140090A9A8Dcd712eD6285858ceBef",
+    "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+  },
+  "31337": {
+    "factory": "0x09635F643e140090A9A8Dcd712eD6285858ceBef",
+    "contract": "0x842a4E4353b65E17C02cA55e58286Caf87660237",
+    "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+  }
+}
