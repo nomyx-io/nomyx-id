@@ -121,8 +121,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		'src',
 		'config.json'
 	);
-	const currentConfig = JSON.parse(fs.readFileSync(configFilename, 'utf8') || '{}');
-	const newConfig = Object.assign(currentConfig, configObject);
+	let newConfig = configObject;
+	if (fs.existsSync(configFilename)) {
+		const currentConfig = JSON.parse(fs.readFileSync(configFilename, 'utf8') || '{}');
+		newConfig = Object.assign(currentConfig, configObject);
+	} else {
+		newConfig = configObject;
+	}
 	fs.writeFileSync(configFilename, JSON.stringify(newConfig, undefined, 2));
 	console.log('Config written to ', configFilename);
 };

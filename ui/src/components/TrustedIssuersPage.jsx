@@ -84,7 +84,7 @@ const TrustedIssuersPage = ({ service }) => {
 
     useEffect(() => {
         async function fetchData() {
-            const issuers = await service.getTrustedIssuers();
+            const issuers = await service.getTrustedIssuers && service.getTrustedIssuers();
             setTrustedIssuers(issuers);
         }
 
@@ -97,7 +97,9 @@ const TrustedIssuersPage = ({ service }) => {
 
     const removeTrustedIssuer = async (issuer) => {
         await service.removeTrustedIssuer(issuer);
-    };
+    };[
+
+    ]
 
     return (
         <div className='p-6'>
@@ -136,7 +138,7 @@ const TrustedIssuersPage = ({ service }) => {
                 Remove Trusted Issuer
             </Button>
             <div className='mt-4 grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
-                {trustedIssuers.map(issuer =>
+                {trustedIssuers && trustedIssuers.map(issuer =>
                     <TrustedIssuerListItem issuer={issuer} key={issuer.id}
                         setSelectedIssuer={setSelectedIssuer} />
                 )}

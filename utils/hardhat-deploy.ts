@@ -51,10 +51,10 @@ export async function deployErc721DiamondFactory(hre: any) {
   console.log(`deployed ${libs.length} libraries for erc721 diamond factory`);
   console.log(`deployed erc721 diamond factory at ${diamondFactory.address}`);
 
-  let gasPrice = await hre.ethers.getDefaultProvider().getGasPrice();
+  let gasPrice = await hre.ethers.provider.getGasPrice();
   let receipt = await diamondFactory.removeFacets('default', {
-      gasPrice: gasPrice,
-      gasLimit: 1000000,
+    gasPrice: gasPrice,
+    gasLimit: 1000000,
   });
   await receipt.wait();
   console.log(`removed Facets from Diamond Factory`);
@@ -62,19 +62,19 @@ export async function deployErc721DiamondFactory(hre: any) {
   const diamondCut: any = [];
   // add the libs to the diamond factory using the  setFacets function
   for (let i = 0; i < facets.length; i++) {
-      const facet = facets[i];
-      const facetAddress = await getContractDeployment(hre, facet);
-      diamondCut.push({
-          facetAddress: facetAddress.address,
-          action: FacetCutAction.Add,
-          functionSelectors: getSelectors(facetAddress),
-      });
+    const facet = facets[i];
+    const facetAddress = await getContractDeployment(hre, facet);
+    diamondCut.push({
+      facetAddress: facetAddress.address,
+      action: FacetCutAction.Add,
+      functionSelectors: getSelectors(facetAddress),
+    });
   }
   console.log('Adding Facets to Diamond Factory: ', diamondCut);
   // add the facets to the diamond factory using the  setFacets function
   receipt = await diamondFactory.setFacets('default', diamondCut, {
-      gasPrice: gasPrice,
-      gasLimit: 1000000,
+    gasPrice: gasPrice,
+    gasLimit: 1000000,
   });
   await receipt.wait();
 
@@ -124,7 +124,7 @@ export async function deployEmptyDiamondFactory(hre: any) {
  * @param facets 
  * @param diamondFactory 
  */
-export async function addFacetSetToDiamondFactory(hre: any, setName: any, facets: any,  diamondFactory: any) {
+export async function addFacetSetToDiamondFactory(hre: any, setName: any, facets: any, diamondFactory: any) {
   // create a list of FacetCutAction to add to the diamond factory
   const diamondCut: any = [];
   for (let i = 0; i < facets.length; i++) {
@@ -178,12 +178,12 @@ export async function createDiamond(
     symbol: symbol,
     name: name,
   };
-  
+
   const symbols = await tokenFactory.symbols();
   if (!symbols.includes(symbol)) {
 
     const zeroAddress = '0x0000000000000000000000000000000000000000';
-    const gasPrice = await hre.ethers.getDefaultProvider().getGasPrice();
+    const gasPrice = await hre.ethers.provider.getGasPrice();
     const gasLimit = await tokenFactory.createFromSet(requestData, zeroAddress, [], facets);
 
     console.log(`creating diamond ${symbol} at ${tokenAddress} with ${facets.length} facets - fee ${gasPrice.mul(gasLimit)}`);
@@ -223,7 +223,7 @@ export async function createDiamondToken(
   };
 
   const symbols = await tokenFactory.symbols();
-  let gasPrice = await hre.ethers.getDefaultProvider().getGasPrice();
+  let gasPrice = await hre.ethers.provider.getGasPrice();
   if (!symbols.includes(symbol)) {
     const zeroAddress = '0x0000000000000000000000000000000000000000';
     console.log(`creating diamond ${symbol} at ${tokenAddress} with default set - fee ${gasPrice.mul(1000000)}`);
@@ -234,12 +234,12 @@ export async function createDiamondToken(
         [],
         'default',
         {
-          gasPrice: gasPrice, 
+          gasPrice: gasPrice,
         }
       )
     ).wait();
   }
-  
+
   console.log(`adding svg manager to token ${symbol}`)
   const tokenContract = await getDiamondToken(hre, symbol);
   await (

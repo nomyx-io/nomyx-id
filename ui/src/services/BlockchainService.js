@@ -41,6 +41,15 @@ class BlockchainService {
         this.unlinkWallet = this.unlinkWallet.bind(this);
         this.unlinkWalletAddress = this.unlinkWalletAddress.bind(this);
         this.walletAddressLinked = this.walletAddressLinked.bind(this);
+
+        // Trusted Issuers Registry
+        this.addTrustedIssuer = this.addTrustedIssuer.bind(this);
+        this.removeTrustedIssuer = this.removeTrustedIssuer.bind(this);
+        this.updateIssuerClaimTopics = this.updateIssuerClaimTopics.bind(this);
+        this.getTrustedIssuers = this.getTrustedIssuers.bind(this);
+        this.isTrustedIssuer = this.isTrustedIssuer.bind(this);
+        this.getTrustedIssuerClaimTopics = this.getTrustedIssuerClaimTopics.bind(this);
+        this.hasClaimTopic = this.hasClaimTopic.bind(this);
     }
 
     // Event listeners
