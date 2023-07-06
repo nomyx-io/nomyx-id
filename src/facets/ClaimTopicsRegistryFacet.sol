@@ -33,10 +33,4 @@ contract ClaimTopicsRegistryFacet is IClaimTopicsRegistry {
         return _contract.getClaimTopics();
     }
 
-    function transferOwnershipOnClaimTopicsRegistryContract(address _newOwner) external override
-    onlyOwner {
-        require(_newOwner != address(0), "New owner is the zero address");
-        ClaimTopicStorage storage _contract = ClaimTopicLib.claimTopicStorage();
-        _contract.owner = _newOwner;
-    }
 }
