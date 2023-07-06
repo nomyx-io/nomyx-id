@@ -12,10 +12,6 @@ typechain-types/
 node_modules/
 .env
 
-.prettierrc.js
-pnpm-lock.yaml
-package.json
-
 contractsInfo.json
 deployments/hardhat
 deployments/localhost

@@ -2,13 +2,16 @@ import 'dotenv/config';
 import { HardhatUserConfig } from 'hardhat/types';
 
 import '@nomiclabs/hardhat-ethers';
-import '@typechain/hardhat';
 import 'hardhat-gas-reporter';
 import 'solidity-coverage';
 
 import 'hardhat-deploy';
 import 'hardhat-deploy-ethers';
 import 'hardhat-deploy-tenderly';
+
+import './tasks/claim-topics';
+import './tasks/identities';
+import './tasks/trusted-issuers';
 
 import { node_url, accounts, addForkConfiguration } from './utils/network';
 
