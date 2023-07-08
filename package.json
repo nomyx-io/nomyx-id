@@ -10,8 +10,6 @@
         "@nomiclabs/hardhat-waffle": "^2.0.3",
         "@nomiclabs/hardhat-web3": "^2.0.0",
         "@openzeppelin/contracts": "^4.9.2",
-        "@typechain/ethers-v5": "^7.2.0",
-        "@typechain/hardhat": "^2.3.1",
         "@types/chai": "^4.3.5",
         "@types/mocha": "^10.0.1",
         "@types/node": "^20.3.1",
@@ -41,7 +39,7 @@
         "typescript": "^5.1.3"
     },
     "scripts": {
-        "prepare": "node ./.setup.js && hardhat typechain",
+        "prepare": "node ./.setup.js",
         "format": "prettier --check \"**/*.{ts,js,sol}\"",
         "format:fix": "prettier --write \"**/*.{ts,js,sol}\"",
         "compile": "hardhat compile",
