@@ -3,15 +3,11 @@ pragma solidity ^0.8.0;
 
 import "../interfaces/IClaimTopicsRegistry.sol";
 import "../libraries/ClaimTopicLib.sol";
+import "../utilities/Modifiers.sol";
 
-contract ClaimTopicsRegistryFacet is IClaimTopicsRegistry {
+contract ClaimTopicsRegistryFacet is IClaimTopicsRegistry, Modifiers {
 
     using ClaimTopicLib for ClaimTopicContract;
-
-    modifier onlyOwner() {
-        require(msg.sender == ClaimTopicLib.claimTopicStorage().owner, "Caller is not the owner");
-        _;
-    }
 
     constructor() {
         ClaimTopicStorage storage _contract = ClaimTopicLib.claimTopicStorage();

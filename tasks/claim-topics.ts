@@ -28,9 +28,9 @@ task("add-claim-topic", "add a claim topic")
     .addParam("topic", "claim topic to add")
     .setAction(async (taskArgs, hre) => {
         // get the diamond token
-        const diamondToken = await getDiamondToken(hre, taskArgs.address);
+        const diamondToken = await getDiamondToken(hre, taskArgs.symbol);
         // add the claim topic
-        const tx = await diamondToken.addClaimTopic(taskArgs.claimTopic);
+        const tx = await diamondToken.addClaimTopic(taskArgs.topic);
         // wait for the tx to be mined
         const receipt = await tx.wait();
         // console.log the receipt

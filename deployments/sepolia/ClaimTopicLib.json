@@ -1,0 +1,67 @@
+{
+  "address": "0x74F75CF7495D01F851E49c9e0b6cfA1E4e874940",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "claimTopic",
+          "type": "uint256"
+        }
+      ],
+      "name": "ClaimTopicAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "claimTopic",
+          "type": "uint256"
+        }
+      ],
+      "name": "ClaimTopicRemoved",
+      "type": "event"
+    }
+  ],
+  "transactionHash": "0xfec5982fd9cc192f58c13f689f5e24ffba8416ef6046216cb55b2d72d3cba793",
+  "receipt": {
+    "to": null,
+    "from": "0x3AAF0e6023A2745FB62052c1954260559fFF4947",
+    "contractAddress": "0x74F75CF7495D01F851E49c9e0b6cfA1E4e874940",
+    "transactionIndex": 28,
+    "gasUsed": "72227",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x629da952db1446296108fd6de204888e612879a20d85cf458cf0342b5fefbce3",
+    "transactionHash": "0xfec5982fd9cc192f58c13f689f5e24ffba8416ef6046216cb55b2d72d3cba793",
+    "logs": [],
+    "blockNumber": 3861162,
+    "cumulativeGasUsed": "10565929",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "469c9ec9a50f53e2fd48aa877fe7231f",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"claimTopic\",\"type\":\"uint256\"}],\"name\":\"ClaimTopicAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"claimTopic\",\"type\":\"uint256\"}],\"name\":\"ClaimTopicRemoved\",\"type\":\"event\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/libraries/ClaimTopicLib.sol\":\"ClaimTopicLib\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":2000},\"remappings\":[]},\"sources\":{\"src/interfaces/IClaimTopicsRegistry.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface IClaimTopicsRegistry {\\n\\n    // events\\n    event ClaimTopicAdded(uint256 indexed claimTopic);\\n    event ClaimTopicRemoved(uint256 indexed claimTopic);\\n\\n    // functions\\n    // setters\\n    function addClaimTopic(uint256 _claimTopic) external;\\n    function removeClaimTopic(uint256 _claimTopic) external;\\n\\n    // getter\\n    function getClaimTopics() external view returns (uint256[] memory);\\n\\n}\",\"keccak256\":\"0xf1de8ce4a353e0fe1bf698d8063629b0a34202196a148845ccb57b446751e2b9\",\"license\":\"MIT\"},\"src/libraries/ClaimTopicLib.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nimport \\\"../interfaces/IClaimTopicsRegistry.sol\\\";\\n\\nstruct ClaimTopicContract {\\n    uint256[] claimTopics;\\n}\\n\\nstruct ClaimTopicStorage {\\n    ClaimTopicContract _contract;\\n    address owner;\\n}\\n\\nlibrary ClaimTopicLib {\\n\\n    event ClaimTopicAdded(uint256 indexed claimTopic);\\n    event ClaimTopicRemoved(uint256 indexed claimTopic);\\n\\n    modifier onlyOwner(address caller) {\\n        require(caller == claimTopicStorage().owner, \\\"Caller is not the owner\\\");\\n        _;\\n    }\\n\\n    bytes32 internal constant DIAMOND_STORAGE_POSITION = \\n        keccak256(\\\"diamond.standard.claimTopics.facet.contract\\\");\\n\\n    function claimTopicStorage() internal pure returns (ClaimTopicStorage storage ds) {\\n        bytes32 position = DIAMOND_STORAGE_POSITION;\\n        assembly {\\n            ds.slot := position\\n        }\\n    }\\n\\n    function addClaimTopic(\\n        ClaimTopicContract storage self,\\n        uint256 _claimTopic,\\n        address caller\\n    ) internal onlyOwner(caller) {\\n        self.claimTopics.push(_claimTopic);\\n        emit ClaimTopicAdded(_claimTopic);\\n    }\\n\\n    function removeClaimTopic(\\n        ClaimTopicContract storage self,\\n        uint256 _claimTopic,\\n        address caller\\n    ) internal onlyOwner(caller) {\\n        for (uint256 i; i < self.claimTopics.length; i++) {\\n            if (self.claimTopics[i] == _claimTopic) {\\n                self.claimTopics[i] = self.claimTopics[self.claimTopics.length - 1];\\n                self.claimTopics.pop();\\n                emit ClaimTopicRemoved(_claimTopic);\\n                return;\\n            }\\n        }\\n        revert(\\\"Claim topic not found.\\\");\\n    }\\n\\n    function getClaimTopics(ClaimTopicContract storage self) internal view returns (uint256[] memory) {\\n        return self.claimTopics;\\n    }\\n}\\n\",\"keccak256\":\"0x7672725e8d08648a79ad716f6a4187c973cfce51e7a8625a023e712f41350d55\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea264697066735822122013a407dc0255984d2a6b41645cf028d83bd06962235fd6d38632be68027f990464736f6c63430008110033",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea264697066735822122013a407dc0255984d2a6b41645cf028d83bd06962235fd6d38632be68027f990464736f6c63430008110033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}

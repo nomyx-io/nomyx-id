@@ -12,6 +12,7 @@ import 'hardhat-deploy-tenderly';
 import './tasks/claim-topics';
 import './tasks/identities';
 import './tasks/trusted-issuers';
+import './tasks/get-account-address';
 
 import { node_url, accounts, addForkConfiguration } from './utils/network';
 
@@ -40,6 +41,10 @@ const config: HardhatUserConfig = {
 		localhost: {
 			url: node_url('localhost'),
 			accounts: accounts(),
+		},
+		local: {
+			url: node_url('local'),
+			accounts: accounts('local'),
 		},
 		staging: {
 			url: node_url('rinkeby'),

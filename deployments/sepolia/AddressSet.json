@@ -1,0 +1,93 @@
+{
+  "address": "0x99D84A2aA566300d09323EE12ad120177B7654bA",
+  "abi": [],
+  "transactionHash": "0x297a581b8809650e4c076646369d7df778d4ad17c521dda63330a5f07a1f8845",
+  "receipt": {
+    "to": null,
+    "from": "0x3AAF0e6023A2745FB62052c1954260559fFF4947",
+    "contractAddress": "0x99D84A2aA566300d09323EE12ad120177B7654bA",
+    "transactionIndex": 19,
+    "gasUsed": "370082",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xa627c8f4aac47aef461bc9e50945b52ee4eab4a15f9b2d86ae63803ad9bd8bc3",
+    "transactionHash": "0x297a581b8809650e4c076646369d7df778d4ad17c521dda63330a5f07a1f8845",
+    "logs": [],
+    "blockNumber": 3861156,
+    "cumulativeGasUsed": "10041884",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "a261774717de28517d6038bd0944662b",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"details\":\"Sets are unordered. Delete operations reorder keys. All operations have a fixed gas cost at any scale, O(1). author: Rob Hitchens\",\"kind\":\"dev\",\"methods\":{\"count(AddressSet.Set storage)\":{\"params\":{\"self\":\"storage pointer to a Set.\"}},\"exists(AddressSet.Set storage,address)\":{\"params\":{\"key\":\"value to check.\",\"self\":\"storage pointer to a Set.\"},\"returns\":{\"_0\":\"bool true: Set member, false: not a Set member.\"}},\"insert(AddressSet.Set storage,address)\":{\"details\":\"duplicate keys are not permitted.\",\"params\":{\"key\":\"value to insert.\",\"self\":\"storage pointer to a Set.\"}},\"keyAtIndex(AddressSet.Set storage,uint256)\":{\"params\":{\"index\":\"row to enumerate. Must be < count() - 1.\",\"self\":\"storage pointer to a Set.\"}},\"remove(AddressSet.Set storage,address)\":{\"details\":\"key to remove must exist.\",\"params\":{\"key\":\"value to remove.\",\"self\":\"storage pointer to a Set.\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"count(AddressSet.Set storage)\":{\"notice\":\"count the keys.\"},\"exists(AddressSet.Set storage,address)\":{\"notice\":\"check if a key is in the Set.\"},\"insert(AddressSet.Set storage,address)\":{\"notice\":\"insert a key.\"},\"keyAtIndex(AddressSet.Set storage,uint256)\":{\"notice\":\"fetch a key by row (enumerate).\"},\"remove(AddressSet.Set storage,address)\":{\"notice\":\"remove a key.\"}},\"notice\":\"Key sets with enumeration and delete. Uses mappings for random and existence checks and dynamic arrays for enumeration. Key uniqueness is enforced.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/libraries/AddressSet.sol\":\"AddressSet\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":2000},\"remappings\":[]},\"sources\":{\"src/libraries/AddressSet.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity >=0.8.0;\\n\\n/**\\n * @notice Key sets with enumeration and delete. Uses mappings for random\\n * and existence checks and dynamic arrays for enumeration. Key uniqueness is enforced.\\n * @dev Sets are unordered. Delete operations reorder keys. All operations have a\\n * fixed gas cost at any scale, O(1).\\n * author: Rob Hitchens\\n */\\n\\nlibrary AddressSet {\\n    struct Set {\\n        mapping(address => uint256) keyPointers;\\n        address[] keyList;\\n    }\\n\\n    /**\\n     * @notice insert a key.\\n     * @dev duplicate keys are not permitted.\\n     * @param self storage pointer to a Set.\\n     * @param key value to insert.\\n     */\\n    function insert(Set storage self, address key) public {\\n        require(\\n            !exists(self, key),\\n            \\\"AddressSet: key already exists in the set.\\\"\\n        );\\n        self.keyList.push(key);\\n        self.keyPointers[key] = self.keyList.length - 1;\\n    }\\n\\n    /**\\n     * @notice remove a key.\\n     * @dev key to remove must exist.\\n     * @param self storage pointer to a Set.\\n     * @param key value to remove.\\n     */\\n    function remove(Set storage self, address key) public {\\n        // TODO: I commented this out do get a test to pass - need to figure out what is up here\\n        require(\\n            exists(self, key),\\n            \\\"AddressSet: key does not exist in the set.\\\"\\n        );\\n        if (!exists(self, key)) return;\\n        uint256 last = count(self) - 1;\\n        uint256 rowToReplace = self.keyPointers[key];\\n        if (rowToReplace != last) {\\n            address keyToMove = self.keyList[last];\\n            self.keyPointers[keyToMove] = rowToReplace;\\n            self.keyList[rowToReplace] = keyToMove;\\n        }\\n        delete self.keyPointers[key];\\n        self.keyList.pop();\\n    }\\n\\n    /**\\n     * @notice count the keys.\\n     * @param self storage pointer to a Set.\\n     */\\n    function count(Set storage self) public view returns (uint256) {\\n        return (self.keyList.length);\\n    }\\n\\n    /**\\n     * @notice check if a key is in the Set.\\n     * @param self storage pointer to a Set.\\n     * @param key value to check.\\n     * @return bool true: Set member, false: not a Set member.\\n     */\\n    function exists(Set storage self, address key)\\n        public\\n        view\\n        returns (bool)\\n    {\\n        if (self.keyList.length == 0) return false;\\n        return self.keyList[self.keyPointers[key]] == key;\\n    }\\n\\n    /**\\n     * @notice fetch a key by row (enumerate).\\n     * @param self storage pointer to a Set.\\n     * @param index row to enumerate. Must be < count() - 1.\\n     */\\n    function keyAtIndex(Set storage self, uint256 index)\\n        public\\n        view\\n        returns (address)\\n    {\\n        return self.keyList[index];\\n    }\\n}\\n\",\"keccak256\":\"0x3b999937288120e5f0651a80c259e5016f7ed9db37ec78aafb0da8b9d70bcae7\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6105c261003a600b82828239805160001a60731461002d57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600436106100715760003560e01c8063989779e91161005a578063989779e9146100c0578063a8a37bd3146100e0578063df223d421461010357600080fd5b8063601e6e56146100765780638c9d1e411461009e575b600080fd5b61008b6100843660046104c8565b6001015490565b6040519081526020015b60405180910390f35b8180156100aa57600080fd5b506100be6100b93660046104e1565b61012e565b005b8180156100cc57600080fd5b506100be6100db3660046104e1565b610329565b6100f36100ee3660046104e1565b610430565b6040519015158152602001610095565b61011661011136600461051d565b610495565b6040516001600160a01b039091168152602001610095565b6101388282610430565b6101c9576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602a60248201527f416464726573735365743a206b657920646f6573206e6f74206578697374206960448201527f6e20746865207365742e0000000000000000000000000000000000000000000060648201526084015b60405180910390fd5b6101d38282610430565b6101db575050565b600060016101ea846001015490565b6101f4919061053f565b6001600160a01b03831660009081526020859052604090205490915080821461029f57600084600101838154811061022e5761022e610560565b60009182526020808320909101546001600160a01b031680835290879052604090912083905560018601805491925082918490811061026f5761026f610560565b9060005260206000200160006101000a8154816001600160a01b0302191690836001600160a01b03160217905550505b6001600160a01b038316600090815260208590526040812055600184018054806102cb576102cb610576565b60008281526020902081017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff90810180547fffffffffffffffffffffffff000000000000000000000000000000000000000016905501905550505050565b6103338282610430565b156103c0576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602a60248201527f416464726573735365743a206b657920616c726561647920657869737473206960448201527f6e20746865207365742e0000000000000000000000000000000000000000000060648201526084016101c0565b6001828101805480830182556000828152602090200180547fffffffffffffffffffffffff0000000000000000000000000000000000000000166001600160a01b03851617905554610412919061053f565b6001600160a01b039091166000908152602092909252604090912055565b600182015460009081036104465750600061048f565b6001600160a01b038216600081815260208590526040902054600185018054909190811061047657610476610560565b6000918252602090912001546001600160a01b03161490505b92915050565b60008260010182815481106104ac576104ac610560565b6000918252602090912001546001600160a01b03169392505050565b6000602082840312156104da57600080fd5b5035919050565b600080604083850312156104f457600080fd5b8235915060208301356001600160a01b038116811461051257600080fd5b809150509250929050565b6000806040838503121561053057600080fd5b50508035926020909101359150565b8181038181111561048f57634e487b7160e01b600052601160045260246000fd5b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052603160045260246000fdfea264697066735822122005e66edd388e05743bab5d20904837604086c6b72dd2c657e05d91d41bea10fe64736f6c63430008110033",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600436106100715760003560e01c8063989779e91161005a578063989779e9146100c0578063a8a37bd3146100e0578063df223d421461010357600080fd5b8063601e6e56146100765780638c9d1e411461009e575b600080fd5b61008b6100843660046104c8565b6001015490565b6040519081526020015b60405180910390f35b8180156100aa57600080fd5b506100be6100b93660046104e1565b61012e565b005b8180156100cc57600080fd5b506100be6100db3660046104e1565b610329565b6100f36100ee3660046104e1565b610430565b6040519015158152602001610095565b61011661011136600461051d565b610495565b6040516001600160a01b039091168152602001610095565b6101388282610430565b6101c9576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602a60248201527f416464726573735365743a206b657920646f6573206e6f74206578697374206960448201527f6e20746865207365742e0000000000000000000000000000000000000000000060648201526084015b60405180910390fd5b6101d38282610430565b6101db575050565b600060016101ea846001015490565b6101f4919061053f565b6001600160a01b03831660009081526020859052604090205490915080821461029f57600084600101838154811061022e5761022e610560565b60009182526020808320909101546001600160a01b031680835290879052604090912083905560018601805491925082918490811061026f5761026f610560565b9060005260206000200160006101000a8154816001600160a01b0302191690836001600160a01b03160217905550505b6001600160a01b038316600090815260208590526040812055600184018054806102cb576102cb610576565b60008281526020902081017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff90810180547fffffffffffffffffffffffff000000000000000000000000000000000000000016905501905550505050565b6103338282610430565b156103c0576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602a60248201527f416464726573735365743a206b657920616c726561647920657869737473206960448201527f6e20746865207365742e0000000000000000000000000000000000000000000060648201526084016101c0565b6001828101805480830182556000828152602090200180547fffffffffffffffffffffffff0000000000000000000000000000000000000000166001600160a01b03851617905554610412919061053f565b6001600160a01b039091166000908152602092909252604090912055565b600182015460009081036104465750600061048f565b6001600160a01b038216600081815260208590526040902054600185018054909190811061047657610476610560565b6000918252602090912001546001600160a01b03161490505b92915050565b60008260010182815481106104ac576104ac610560565b6000918252602090912001546001600160a01b03169392505050565b6000602082840312156104da57600080fd5b5035919050565b600080604083850312156104f457600080fd5b8235915060208301356001600160a01b038116811461051257600080fd5b809150509250929050565b6000806040838503121561053057600080fd5b50508035926020909101359150565b8181038181111561048f57634e487b7160e01b600052601160045260246000fd5b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052603160045260246000fdfea264697066735822122005e66edd388e05743bab5d20904837604086c6b72dd2c657e05d91d41bea10fe64736f6c63430008110033",
+  "devdoc": {
+    "details": "Sets are unordered. Delete operations reorder keys. All operations have a fixed gas cost at any scale, O(1). author: Rob Hitchens",
+    "kind": "dev",
+    "methods": {
+      "count(AddressSet.Set storage)": {
+        "params": {
+          "self": "storage pointer to a Set."
+        }
+      },
+      "exists(AddressSet.Set storage,address)": {
+        "params": {
+          "key": "value to check.",
+          "self": "storage pointer to a Set."
+        },
+        "returns": {
+          "_0": "bool true: Set member, false: not a Set member."
+        }
+      },
+      "insert(AddressSet.Set storage,address)": {
+        "details": "duplicate keys are not permitted.",
+        "params": {
+          "key": "value to insert.",
+          "self": "storage pointer to a Set."
+        }
+      },
+      "keyAtIndex(AddressSet.Set storage,uint256)": {
+        "params": {
+          "index": "row to enumerate. Must be < count() - 1.",
+          "self": "storage pointer to a Set."
+        }
+      },
+      "remove(AddressSet.Set storage,address)": {
+        "details": "key to remove must exist.",
+        "params": {
+          "key": "value to remove.",
+          "self": "storage pointer to a Set."
+        }
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "count(AddressSet.Set storage)": {
+        "notice": "count the keys."
+      },
+      "exists(AddressSet.Set storage,address)": {
+        "notice": "check if a key is in the Set."
+      },
+      "insert(AddressSet.Set storage,address)": {
+        "notice": "insert a key."
+      },
+      "keyAtIndex(AddressSet.Set storage,uint256)": {
+        "notice": "fetch a key by row (enumerate)."
+      },
+      "remove(AddressSet.Set storage,address)": {
+        "notice": "remove a key."
+      }
+    },
+    "notice": "Key sets with enumeration and delete. Uses mappings for random and existence checks and dynamic arrays for enumeration. Key uniqueness is enforced.",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}

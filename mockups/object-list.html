@@ -1,0 +1,421 @@
+<!-- Page description: Object List Page. This page shows a list of objects in a table view. The objewct list shows a configurable set of columns as well as a configurable set of action links per record or global actions which as shown as action buttons.  -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Object Enhancement</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+            padding: 5px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #F8F8F8;
+            color: #333;
+        }
+
+        .container {
+            margin: 2% auto;
+            padding: 30px 10px;
+            max-width: 960px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2,
+        th {
+            color: #0645AD;
+            /* Accent Color */
+            letter-spacing: 0.05em;
+        }
+
+        h2 {
+            color: #666;
+            font-weight: 300;
+        }
+
+        .row,
+        .tabs,
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            text-decoration: none;
+            color: #fff;
+            /* Changing text color to White */
+            background-color: #0645AD;
+            border-radius: 14px;
+            padding: 12px;
+            transition: 0.5s;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 300;
+        }
+
+        .btn:hover {
+            background-color: #0466b9;
+            /* Hover state changed */
+        }
+
+        th,
+        td {
+            padding: 10px 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        td:last-child {
+            text-align: center;
+        }
+
+        td a {
+            margin-right: 1rem;
+            background-color: #04C2C930;
+            border: 1px solid #04C2C9;
+            color: #0645AD;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: 0.5s all;
+            line-height: 0.2;
+            padding: 5px 10px;
+        }
+
+        tr:hover {
+            background-color: #F8F8F8;
+        }
+
+        .pagination a,
+        .tabs a,
+        .search button {
+            background-color: #EEE;
+            color: #444;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: 0.5s all;
+        }
+
+        .tabs a {
+            background-color: #EEE;
+            color: #444;
+            padding: 10px 20px;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            text-decoration: none;
+            transition: 0.5s all;
+            margin-right: 1rem;
+        }
+
+        .pagination a:hover,
+        .tabs a:hover,
+        .search button:hover {
+            background-color: #DDD;
+        }
+
+        .search input[type="text"] {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            width: 75%;
+            margin-right: 1rem;
+            outline: none;
+        }
+
+        .search button {
+            cursor: pointer;
+        }
+
+        .dialog {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .dialog-content {
+            background: #fff;
+            margin: auto;
+            padding: 20px;
+            border-radius: 4px;
+            max-width: 500px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        thead {
+            background: #EEE;
+            color: #444;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #F8F8F8;
+        }
+
+        .tabs {
+            float: left;
+        }
+
+        .tabs a {
+            padding: 10px 20px;
+            text-decoration: none;
+            transition: 0.5s all;
+        }
+
+        .tabs a.active {
+            background-color: #DDD;
+            color: #444;
+        }
+
+        .tabs a:hover {
+            background-color: #DDD;
+        }
+
+        input {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px 20px;
+            width: 100%;
+            margin-bottom: 1rem;
+            outline: none;
+        }
+
+        input[type="date"],
+        input[type="time"],
+        input[type="datetime-local"] {
+            width: 50%;
+        }
+
+        textarea {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px 20px;
+            width: 100%;
+            margin-bottom: 1rem;
+            outline: none;
+        }
+
+        select {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px 20px;
+            width: 100%;
+            margin-bottom: 1rem;
+            outline: none;
+        }
+
+        .dialog-content label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .dialog-content a {
+            margin-right: 1rem;
+            text-decoration: none;
+            transition: 0.5s all;
+            padding: 10px 20px;
+            border-radius: 10px;
+            color: #fff;
+            background-color: #0645AD;
+            /* The accent blue */
+        }
+
+        .dialog-content a:last-child {
+            margin-right: 0;
+            background-color: #0466b9;
+            /* A different blue for the last child */
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="container">
+        <div class="row">
+            <h1>My Objects</h1>
+            <a href="#" class="btn" id="btn-create">Create New Object</a>
+        </div>
+        <h2>A list of your objects</h2>
+        <div class="tabs">
+            <a class="active" href="#">My Objects</a>
+            <a href="#">All Objects</a>
+        </div>
+        <div class="search">
+            <input type="text" placeholder="Search...">
+            <button>Search</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Object 1</td>
+                    <td>1/1/2017</td>
+                    <td>1/1/2017</td>
+                    <td>
+                        <a href="#">Edit</a>
+                        <a href="#">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Object 2</td>
+                    <td>1/1/2017</td>
+                    <td>1/1/2017</td>
+                    <td>
+                        <a href="#">Edit</a>
+                        <a href="#">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Object 3</td>
+                    <td>1/1/2017</td>
+                    <td>1/1/2017</td>
+                    <td>
+                        <a href="#">Edit</a>
+                        <a href="#">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            <a href="#">Previous</a>
+            <a href="#">1</a>
+            <a href="#" class="active">2</a>
+            <a href="#">3</a>
+            <a href="#">Next</a>
+        </div>
+    </div>
+
+    <div class="dialog" id="dialog">
+        <div class="dialog-content">
+            <h2>Create new object</h2>
+            <label for="name">Name</label>
+            <input type="text" id="name">
+            <label for="description">Description</label>
+            <textarea id="description"></textarea>
+            <label for="type">Type</label>
+            <select id="type">
+                <option value="1">Type 1</option>
+                <option value="2">Type 2</option>
+                <option value="3">Type 3</option>
+            </select>
+            <label for="status">Status</label>
+            <select id="status">
+                <option value="1">Status 1</option>
+                <option value="2">Status 2</option>
+                <option value="3">Status 3</option>
+            </select>
+            <label for="date">Date</label>
+            <input type="date" id="date">
+            <label for="time">Time</label>
+            <input type="time" id="time">
+            <label for="datetime">Date and Time</label>
+            <input type="datetime-local" id="datetime">
+            <label for="number">Number</label>
+            <input type="number" id="number">
+            <label for="email">Email</label>
+            <input type="email" id="email">
+            <label for="url">URL</label>
+            <input type="url" id="url">
+            <label for="password">Password</label>
+            <input type="password" id="password">
+            <label for="file">File</label>
+            <input type="file" id="file">
+            <label for="checkbox">Checkbox</label>
+            <input type="checkbox" id="checkbox">
+            <label for="radio">Radio</label>
+            <input type="radio" id="radio">
+            <a href="#" class="btn" id="btn-cancel">Cancel</a>
+            <a href="#" class="btn" id="btn-save">Save</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('btn-create').onclick = function () {
+            document.getElementById('dialog').style.display = 'block';
+        };
+
+        document.getElementById('btn-cancel').onclick = function () {
+            document.getElementById('dialog').classList.remove('active');
+        };
+
+        document.getElementById('btn-save').onclick = function () {
+            // save object
+            document.getElementById('dialog').classList.remove('active');
+        };
+    </script>
+</body>
+
+</html>
+
+<!--
+
+<ObjectList title={"My Objects"}
+    tabs=[{
+        id: "my-objects",
+        name: "My Objects",
+        active: true
+    }, {
+        id: "all-objects",
+        name: "All Objects",
+        active: false
+    }]
+    columns={"name,created,updated"}
+    actions={"edit,delete"}
+    globalActions={"create"}
+    search={"true"}
+    children={[{
+        name: "Object 1",
+        created: "1/1/2017",
+        updated: "1/1/2017"
+        tabs: ["my-objects", "all-objects"]
+    }, {
+        name: "Object 2",
+        created: "1/1/2017",
+        updated: "1/1/2017"
+        tabs: ["my-objects", "all-objects"]
+    }, {
+        name: "Object 3",
+        created: "1/1/2017",
+        updated: "1/1/2017"
+        tabs: ["my-objects"]
+    }]}
+    onAction={function (action, object) {
+        if (action === "edit") {
+            // edit object
+        } else if (action === "delete") {
+            // delete object
+        } else if (action === "create") {
+            // create object
+        }
+    }}
+/>
+
+-->
