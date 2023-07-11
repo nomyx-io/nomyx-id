@@ -1,6 +1,6 @@
 // hardhat tasks for working with identities
 import { task } from "hardhat/config";
-import { getDiamondToken } from "../utils/deploy";
+import { getContractDeployment, getDiamondToken } from "../utils/deploy";
 
 // // functions
 // function addIdentity(address _identity, IIdentity identityData) external;
@@ -32,7 +32,7 @@ task("identities", "get identities")
     .addParam("symbol", "symbol of diamond token")
     .setAction(async (taskArgs, hre) => {
         // get the diamond token
-        const diamondToken = await getDiamondToken(hre, taskArgs.address);
+        const diamondToken = await getDiamondToken(hre, taskArgs.symbol);
         // get the identities
         const identities = await diamondToken.getRegistryUsers();
         // console.log the identities
@@ -43,14 +43,19 @@ task("identities", "get identities")
 task("add-identity", "add an identity")
     .addParam("symbol", "symbol of diamond token")
     .addParam("identity", "identity to add")
-    .addParam("claimTopics", "claim topics to add")
     .setAction(async (taskArgs, hre) => {
+        const identityFactory = await getContractDeployment(hre, 'IdentityFactory');
+        let receipt = (await identityFactory.createIdentity()).wait();
+        // get the identity value for the IdentityCreated event
+        const identity = (await receipt).events[0].args.identity;
+        // console.log the identity
+        console.log(identity);
         // get the diamond token
-        const diamondToken = await getDiamondToken(hre, taskArgs.address);
+        const diamondToken = await getDiamondToken(hre, taskArgs.symbol);
         // add the identity
-        const tx = await diamondToken.addIdentity(taskArgs.identity, taskArgs.claimTopics);
+        const tx = await diamondToken.addIdentity(taskArgs.identity, identity);
         // wait for the tx to be mined
-        const receipt = await tx.wait();
+        receipt = await tx.wait();
         // console.log the receipt
         console.log(receipt);
         // get the identities

@@ -1,137 +1,82 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Checkbox, Modal, Input } from 'antd';
 
-
-const ClaimTopicListItem = ({ item, setSelectedTopics }) => {
-  const [isChecked, setIsChecked] = useState(false);
-
-  return (
-    <div className="flex items-center">
-      <Checkbox
-        className="mr-4"
-        checked={isChecked}
-        onChange={() => {
-          setIsChecked(!isChecked);
-          setSelectedTopics((prevState) =>
-            isChecked ? prevState.filter((topic) => topic !== item) : [...prevState, item]
-          );
-        }}
-      />
-      {item}
-    </div>
-  );
-}
-
-const AddClaimTopicDialog = ({ visible, newTopic, setNewTopic, handleAddTopic, onCancel }) => {
-  return (
-    <Modal
-      title="Add Claim Topic"
-      visible={visible}
-      onCancel={onCancel}
-      onOk={handleAddTopic}
-    >
-      <Input
-        value={newTopic}
-        onChange={(e) => setNewTopic(e.target.value)}
-      />
-    </Modal>
-  );
-}
-
-const RemoveClaimTopicDialog = ({ visible, handleRemoveTopics, onCancel }) => {
-  return (
-    <Modal
-      title="Confirm Removal"
-      visible={visible}
-      onCancel={onCancel}
-      onOk={handleRemoveTopics}
-    >
-      Are you sure you want to remove the selected claim topics?
-    </Modal>
-  );
-}
+import ObjectList from './ObjectList';
 
 const ClaimTopicsPage = ({ service }) => {
-  const [topics, setTopics] = useState([]);
-  const [newTopic, setNewTopic] = useState('');
-  const [selectedTopics, setSelectedTopics] = useState([]);
-  const [addModalVisible, setAddModalVisible] = useState(false);
-  const [removeModalVisible, setRemoveModalVisible] = useState(false);
 
-  // Fetch initial topics
-  useEffect(() => {
-    async function fetchTopics() {
-      const fetchedTopics = await service.getClaimTopics();
-      setTopics(fetchedTopics);
-    }
+  const tabs = [
+    { id: "all", name: "All" },
+    { id: "active", name: "Active" },
+    { id: "inactive", name: "Inactive" },
+  ];
 
-    fetchTopics();
-  }, [service]);
+  const columns = [
+    "Name",
+    "Description",
+    "Status",
+  ];
 
-  // Setup event listeners
-  useEffect(() => {
-    service.onClaimTopicAdded && service.onClaimTopicAdded((claimTopic) => {
-      setTopics((prevState) => [...prevState, claimTopic]);
-    });
+  const actions = [
+    "edit",
+    "delete",
+  ];
 
-    service.onClaimTopicRemoved && service.onClaimTopicRemoved((claimTopic) => {
-      setTopics((prevState) => prevState.filter((topic) => topic !== claimTopic));
-    });
+  const globalActions = [
+    "create",
+  ];
 
-    return () => {
-      // Clean up event listeners
-      service.contract && service.contract.removeAllListeners('ClaimTopicAdded');
-      service.contract && service.contract.removeAllListeners('ClaimTopicRemoved');
-    };
-  }, [service]);
+  const search = true;
 
-  const handleAddTopic = async () => {
-    if (newTopic !== '') {
-      await service.addClaimTopic(newTopic);
-      setNewTopic('');
-      setAddModalVisible(false);
-    }
-  };
+  const children = [
+    {
+      name: "Object 1",
+      description: "This is object 1",
+      status: "active",
+      tabs: ["all", "active"],
+    },
+    {
+      name: "Object 2",
+      description: "This is object 2",
+      status: "inactive",
+      tabs: ["all", "inactive"],
+    },
+    {
+      name: "Object 3",
+      description: "This is object 3",
+      status: "active",
+      tabs: ["all", "active"],
+    },
+    {
+      name: "Object 4",
+      description: "This is object 4",
+      status: "inactive",
+      tabs: ["all", "inactive"],
+    },
+    {
+      name: "Object 5",
+      description: "This is object 5",
+      status: "active",
+      tabs: ["all", "active"],
+    },
+  ]
 
-  const handleRemoveTopics = async () => {
-    for (const topic of selectedTopics) {
-      await service.removeClaimTopic(topic);
-    }
-    setSelectedTopics([]);
-    setRemoveModalVisible(false);
-  };
+  const handleAction = (action, object) => {
+    console.log(action, object);
+  }
 
   return (
-    <div>
-      <Button type="primary" onClick={() => setAddModalVisible(true)}>
-        Add Claim Topic
-      </Button>
-      {topics.length > 0 && (
-        <Button
-          type="primary"
-          onClick={() => setRemoveModalVisible(true)}
-          style={{ marginLeft: '10px' }}
-        >
-          Remove Claim Topic(s)
-        </Button>
-      )}
-      {topics.map((topic, index) => (
-        <ClaimTopicListItem key={index} item={topic} setSelectedTopics={setSelectedTopics} />
-      ))}
-      <AddClaimTopicDialog
-        visible={addModalVisible}
-        newTopic={newTopic}
-        setNewTopic={setNewTopic}
-        handleAddTopic={handleAddTopic}
-        onCancel={() => setAddModalVisible(false)}
-      />
-      <RemoveClaimTopicDialog
-        visible={removeModalVisible}
-        handleRemoveTopics={handleRemoveTopics}
-        onCancel={() => setRemoveModalVisible(false)}
-      />
-    </div>
-  );
+    <ObjectList
+      title="Claim Topics"
+      tabs={tabs}
+      columns={columns}
+      actions={actions}
+      globalActions={globalActions}
+      search={search}
+      children={children}
+      onAction={handleAction}
+    />);
+
 };
 
 

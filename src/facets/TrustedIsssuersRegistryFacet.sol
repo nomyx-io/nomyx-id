@@ -7,9 +7,14 @@ import { Modifiers } from "../utilities/Modifiers.sol";
 
 import "../libraries/TrustedIssuerLib.sol";
 
+/// @title TrustedIssuersRegistryFacet
+/// @notice This contract is used to manage the trusted issuers registry
 contract TrustedIssuersRegistryFacet is ITrustedIssuersRegistry, Modifiers {
 	using TrustedIssuerLib for TrustedIssuerContract;
 
+	/// @notice get the trusted issuer struct given the trusted issuer address
+	/// @param issuerAddress The address of the trusted issuer
+	/// @return trustedIssuer The trusted issuer struct
 	function getTrustedIssuer(address issuerAddress) external view returns (TrustedIssuer memory) {
 		TrustedIssuerContract storage _contract = TrustedIssuerLib.trustedIssuerStorage().trustedIssuerContract;
 		return _contract._getTrustedIssuer(issuerAddress);

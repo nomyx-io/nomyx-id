@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 
+import './ObjectList.css';
+
 export const CreateObjectDialog = ({ onSave, onCancel }) => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -80,7 +82,7 @@ const ObjectList = ({ title, tabs, columns, actions, globalActions, search, chil
                 <h1>{title}</h1>
                 {globalActions.includes("create") && <a href="#" className="btn" onClick={handleCreate}>Create New Object</a>}
             </div>
-            <h2>A list of your objects</h2>
+            <h2>A list of your {title}</h2>
             <div className="tabs">
                 {tabs.map(tab => {
                     return (
@@ -138,3 +140,72 @@ const ObjectList = ({ title, tabs, columns, actions, globalActions, search, chil
 }
 
 export default ObjectList;
+
+// example usage:
+
+// const tabs = [
+//     { id: "all", name: "All" },
+//     { id: "active", name: "Active" },
+//     { id: "inactive", name: "Inactive" },
+// ];
+
+// const columns = [
+//     "Name",
+//     "Description",
+//     "Status",
+// ];
+
+// const actions = [
+//     "edit",
+//     "delete",
+// ];
+
+// const globalActions = [
+//     "create",
+// ];
+
+// const search = true;
+
+// const children = [
+//     {
+//         name: "Object 1",
+//         description: "This is object 1",
+//         status: "active",
+//         tabs: ["all", "active"],
+//     },
+//     {
+//         name: "Object 2",
+//         description: "This is object 2",
+//         status: "inactive",
+//         tabs: ["all", "inactive"],
+//     },
+//     {
+//         name: "Object 3",
+//         description: "This is object 3",
+//         status: "active",
+//         tabs: ["all", "active"],
+//     },
+//     {
+//         name: "Object 4",
+//         description: "This is object 4",
+//         status: "inactive",
+//         tabs: ["all", "inactive"],
+//     },
+//     { 
+//         name: "Object 5",
+//         description: "This is object 5",
+//         status: "active",
+//         tabs: ["all", "active"],
+//     },
+//     ]
+//
+// <ObjectList
+//     title="Objects"
+//     tabs={tabs}
+//     columns={columns}
+//     actions={actions}
+//     globalActions={globalActions}
+//     search={search}
+//     children={children}
+//     onAction={handleAction}
+// />
