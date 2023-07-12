@@ -3,7 +3,14 @@ import React, { useState } from 'react';
 
 import './ObjectList.css';
 
-export const CreateObjectDialog = ({ onSave, onCancel }) => {
+function pluralize(str) {
+    return str + "s";
+}
+function singularize(str) {
+    return str.substring(0, str.length - 1);
+}
+
+export const CreateObjectDialog = ({ title, onSave, onCancel }) => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
 
@@ -17,7 +24,7 @@ export const CreateObjectDialog = ({ onSave, onCancel }) => {
 
     return (
         <div>
-            <h2>Create New Object</h2>
+            <h2>Create New {title}</h2>
             <div className="form">
                 <div className="form-group">
                     <label>Name</label>
@@ -58,7 +65,7 @@ const ObjectList = ({ title, tabs, columns, actions, globalActions, search, chil
 
     const handleCreate = () => {
         setShowDialog(true);
-        setDialogContent(<CreateObjectDialog onSave={handleSave} onCancel={handleCancel} />);
+        setDialogContent(<CreateObjectDialog title={title} onSave={handleSave} onCancel={handleCancel} />);
     }
 
     const handleSave = (object) => {
@@ -80,7 +87,9 @@ const ObjectList = ({ title, tabs, columns, actions, globalActions, search, chil
         <div className="container">
             <div className="row">
                 <h1>{title}</h1>
-                {globalActions.includes("create") && <a href="#" className="btn" onClick={handleCreate}>Create New Object</a>}
+                {// eslint-disable-next-line
+                }
+                {globalActions.includes("create") && <a href="#" className="btn" onClick={handleCreate}>Create New {singularize(title)}</a>}
             </div>
             <h2>A list of your {title}</h2>
             <div className="tabs">
