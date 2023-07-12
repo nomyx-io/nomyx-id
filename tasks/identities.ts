@@ -46,6 +46,7 @@ task("add-identity", "add an identity")
     .setAction(async (taskArgs, hre) => {
         const identityFactory = await getContractDeployment(hre, 'IdentityFactory');
         let receipt = (await identityFactory.createIdentity()).wait();
+        const signerAddress = (await receipt).events[0].args.signer;
         // get the identity value for the IdentityCreated event
         const identity = (await receipt).events[0].args.identity;
         // console.log the identity
