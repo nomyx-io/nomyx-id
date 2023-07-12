@@ -1,31 +1,7 @@
 // hardhat tasks for working with identities
 import { task } from "hardhat/config";
-import { getContractDeployment, getDiamondToken } from "../utils/deploy";
-
-// // functions
-// function addIdentity(address _identity, IIdentity identityData) external;
-// function batchAddIdentity(address[] calldata _identities, IIdentity[] calldata identityDatas) external;
-// function removeIdentity(address _identity) external;
-// function addClaim(address _identity, uint256 _claimTopic, bytes calldata _claim) external;
-// function removeClaim(address _identity, uint256 _claimTopic) external;
-
-// // registry consultation
-// function contains(address _userAddress) external view returns (bool);
-// function isVerified(address _userAddress) external view returns (bool);
-// function identity(address _userAddress) external view returns (IIdentity);
-
-// // getters
-// function getRegistryUsers() external view returns (address[] memory);
-// function isRegistryUser(address _registryUser) external view returns(bool);
-// function getClaims(address _registryUser) external view returns(uint256[] memory);
-// function getClaim(address _registryUser, uint256 _claimTopic) external view returns(bytes memory);
-// function hasClaim(address _registryUser, uint256 _claimTopic) external view returns(bool);
-
-// function getOnchainIDFromWallet(address _userAddress) external view returns (bytes32);
-// function walletLinked(bytes32 _onchainID) external view returns (bool);
-// function unlinkWallet(bytes32 _onchainID) external;
-// function unlinkWalletAddress(address _walletAddress) external;
-// function walletAddressLinked(address _walletAddress) external view returns (bool);
+import { getContractDeployment, getContractDeploymentAt, getDiamondToken } from "../utils/deploy";
+import { BigNumber } from "ethers";
 
 // getters
 task("identities", "get identities")
@@ -42,21 +18,28 @@ task("identities", "get identities")
 // add an identity
 task("add-identity", "add an identity")
     .addParam("symbol", "symbol of diamond token")
-    .addParam("identity", "identity to add")
+    .addParam("identity", "user address to add")
     .setAction(async (taskArgs, hre) => {
+        // step 1 - deploy the identity
         const identityFactory = await getContractDeployment(hre, 'IdentityFactory');
-        let receipt = (await identityFactory.createIdentity()).wait();
-        const signerAddress = (await receipt).events[0].args.signer;
-        // get the identity value for the IdentityCreated event
-        const identity = (await receipt).events[0].args.identity;
+        const existingIdentity = await identityFactory.getIdentity(taskArgs.identity);
+        let identity;
+        if (!existingIdentity || BigNumber.from(existingIdentity).isZero()) {
+            let receipt = (await identityFactory.createIdentity(taskArgs.identity)).wait();
+            identity = await identityFactory.getIdentity(taskArgs.identity);
+        } else {
+            identity = existingIdentity;
+        }
+
         // console.log the identity
         console.log(identity);
+
         // get the diamond token
         const diamondToken = await getDiamondToken(hre, taskArgs.symbol);
         // add the identity
         const tx = await diamondToken.addIdentity(taskArgs.identity, identity);
         // wait for the tx to be mined
-        receipt = await tx.wait();
+        const receipt = await tx.wait();
         // console.log the receipt
         console.log(receipt);
         // get the identities
@@ -87,20 +70,33 @@ task("remove-identity", "remove an identity")
 // add a claim
 task("add-claim", "add a claim")
     .addParam("symbol", "symbol of diamond token")
-    .addParam("identity", "identity to add claim to")
-    .addParam("claimTopic", "claim topic to add")
+    .addParam("identity", "user address of identity to add claim to")
+    .addParam("claimtopic", "claim topic to add")
     .addParam("claim", "claim to add")
     .setAction(async (taskArgs, hre) => {
         // get the diamond token
-        const diamondToken = await getDiamondToken(hre, taskArgs.address);
+        const identityFactory = await getContractDeployment(hre, 'IdentityFactory');
+        const identity = await identityFactory.getIdentity(taskArgs.identity);
+        const accountAddress = await hre.ethers.provider.getSigner().getAddress();
+
+        const identityContract = await getContractDeploymentAt(hre, 'Identity', identity);
+
         // add the claim
-        const tx = await diamondToken.addClaim(taskArgs.identity, taskArgs.claimTopic, taskArgs.claim);
+        const tx = await identityContract.addClaim(
+            taskArgs.claimtopic,
+            taskArgs.claimtopic,
+            accountAddress,
+            [],
+            [],
+            "");
         // wait for the tx to be mined
         const receipt = await tx.wait();
+
         // console.log the receipt
         console.log(receipt);
+
         // get the identities
-        const identities = await diamondToken.getRegistryUsers();
+        const identities = await identityFactory.getIdentityUsers();
         // console.log the identities
         console.log(identities);
     });

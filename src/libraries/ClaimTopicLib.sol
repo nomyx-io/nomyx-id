@@ -5,6 +5,7 @@ import "../interfaces/IClaimTopicsRegistry.sol";
 
 struct ClaimTopicContract {
     uint256[] claimTopics;
+    mapping(uint256 => bool) claimTopicIndex;
 }
 
 struct ClaimTopicStorage {
@@ -32,6 +33,7 @@ library ClaimTopicLib {
         uint256 _claimTopic
     ) internal {
         self.claimTopics.push(_claimTopic);
+        self.claimTopicIndex[_claimTopic] = true;
         emit ClaimTopicAdded(_claimTopic);
     }
 
@@ -47,10 +49,15 @@ library ClaimTopicLib {
                 return;
             }
         }
+        self.claimTopicIndex[_claimTopic] = false;
         revert("Claim topic not found.");
     }
 
     function getClaimTopics(ClaimTopicContract storage self) internal view returns (uint256[] memory) {
         return self.claimTopics;
+    }
+
+    function hasClaimTopic(ClaimTopicContract storage self, uint256 _claimTopic) internal view returns (bool) {
+        return self.claimTopicIndex[_claimTopic];
     }
 }

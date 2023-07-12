@@ -3,17 +3,38 @@ pragma solidity ^0.8.0;
 
 import { IIdentity } from "../interfaces/IIdentity.sol";
 import { Controllable } from "../utilities/Controllable.sol";
+import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import { ITrustedIssuersRegistry } from "../interfaces/ITrustedIssuersRegistry.sol";
 
 /// @title Identity
 /// @notice This contract represents an identity of a user
 /// @dev This contract is used to store the claims of a user
-contract Identity is IIdentity, Controllable {
+contract Identity is IIdentity, Controllable, Initializable {
 	
 	mapping(bytes32 => Key) keys;
 	mapping(uint256 => bytes32[]) keysByPurpose;
 
-	constructor() Controllable() {
-		_addController(msg.sender);
+	address identityRegistry;
+	address trustedIssuerRegistry;
+
+	modifier onlyTrustedIssuer() {
+		require(
+			ITrustedIssuersRegistry(trustedIssuerRegistry).isTrustedIssuer(msg.sender),
+			"Sender is not a trusted issuer"
+		);
+		_;
+	}
+
+	/**
+	 * initialize the contract
+	 * @param _owner the owner of the contract
+	 * @param _identityRegistry the identity registry
+	 * @param _trustedIssuerRegistry the trusted issuer registry
+	 */
+	function initialize(address _owner, address _identityRegistry, address _trustedIssuerRegistry) external initializer {
+		_addController(_owner);
+		identityRegistry = _identityRegistry;
+		trustedIssuerRegistry = _trustedIssuerRegistry;
 	}
 
 	struct Key {
@@ -22,7 +43,7 @@ contract Identity is IIdentity, Controllable {
 		bytes32 key;
 	}
 
-	function addKey(bytes32 _key, uint256 _purpose, uint256 _keyType) external override onlyController {
+	function addKey(bytes32 _key, uint256 _purpose, uint256 _keyType) external override onlyTrustedIssuer {
 		require(keys[_key].key != _key, "Key already exists");
 
 		keys[_key].key = _key;
@@ -34,7 +55,7 @@ contract Identity is IIdentity, Controllable {
 		emit KeyAdded(_key, _purpose, _keyType);
 	}
 
-	function removeKey(bytes32 _key, uint256 _purpose) external override onlyController {
+	function removeKey(bytes32 _key, uint256 _purpose) external override onlyTrustedIssuer {
 		require(keys[_key].key == _key, "No such key");
 		for (uint i = 0; i < keys[_key].purposes.length; i++) {
 			if (keys[_key].purposes[i] == _purpose) {
@@ -75,7 +96,7 @@ contract Identity is IIdentity, Controllable {
 		return _keyHasPurpose(_key, _purpose);
 	}
 
-	function execute(address _to, uint256 _value, bytes calldata _data) external payable onlyController returns (uint256 executionId) {
+	function execute(address _to, uint256 _value, bytes calldata _data) external payable onlyTrustedIssuer returns (uint256 executionId) {
 		require(_keyHasPurpose(keccak256(abi.encodePacked(msg.sender)), 1), "Sender does not have rights");
 		(bool success, ) = _to.call{value: _value}(_data);
 		if (success) {
@@ -86,7 +107,7 @@ contract Identity is IIdentity, Controllable {
 		return executionId;
 	}
 
-	function approve(uint256 _id, bool _approve) external override onlyController {
+	function approve(uint256 _id, bool _approve) external override onlyTrustedIssuer {
 		require(_keyHasPurpose(keccak256(abi.encodePacked(msg.sender)), 2), "Sender does not have rights");
 		if (_approve) {
 			emit Approved(_id, true);
@@ -137,7 +158,8 @@ contract Identity is IIdentity, Controllable {
 		bytes memory _signature,
 		bytes memory _data,
 		string memory _uri
-	) external override onlyController returns (uint256 claimRequestId) {
+	) external override onlyTrustedIssuer returns (uint256 claimRequestId) {
+
 		bytes32 claimId = keccak256(abi.encodePacked(_issuer, _topic));
 
 		Claim storage claim = claims[claimId];
@@ -171,7 +193,7 @@ contract Identity is IIdentity, Controllable {
 		require(false, "Not implemented");
 	}
 
-	function removeClaim(bytes32 _claimId) external override onlyController returns (bool success) {
+	function removeClaim(bytes32 _claimId) external override onlyTrustedIssuer returns (bool success) {
 		Claim storage claim = claims[_claimId];
 		require(claim.issuer != address(0), "Claim does not exist");
 		delete claims[_claimId];

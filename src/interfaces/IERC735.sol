@@ -9,7 +9,13 @@ interface IERC735 {
 
     function getClaim(bytes32 _claimId) external returns(uint256 topic, uint256 scheme, address issuer, bytes memory signature, bytes memory data, string memory uri);
     function getClaimIdsByTopic(uint256 _topic) external returns(bytes32[] memory claimIds);
-    function addClaim(uint256 _topic, uint256 _scheme, address _issuer, bytes memory _signature, bytes memory _data, string memory _uri) external returns (uint256 claimRequestId);
+    function addClaim(
+        uint256 _topic, 
+        uint256 _scheme, 
+        address _issuer, 
+        bytes memory _signature, 
+        bytes memory _data, 
+        string memory _uri) external returns (uint256 claimRequestId);
     function changeClaim(bytes32 _claimId, uint256 _topic, uint256 _scheme, address _issuer, bytes memory _signature, bytes memory _data, string memory _uri) external returns (bool success);
     function removeClaim(bytes32 _claimId) external returns (bool success);
 }

@@ -21,6 +21,7 @@ contract ClaimTopicsRegistryFacet is IClaimTopicsRegistry, Modifiers {
     /// @dev Only the owner can call this function
     function addClaimTopic(uint256 _claimTopic) external override onlyOwner {
         ClaimTopicContract storage _contract = ClaimTopicLib.claimTopicStorage()._contract;
+        require(!_contract.hasClaimTopic(_claimTopic), "Claim topic already exists");
         _contract.addClaimTopic(_claimTopic);
     }
 
@@ -29,6 +30,8 @@ contract ClaimTopicsRegistryFacet is IClaimTopicsRegistry, Modifiers {
     /// @dev Only the owner can call this function
     function removeClaimTopic(uint256 _claimTopic) external override onlyOwner {
         ClaimTopicContract storage _contract = ClaimTopicLib.claimTopicStorage()._contract;
+        require(_claimTopic != 0, "Cannot remove claim topic 0");
+        require(_contract.hasClaimTopic(_claimTopic), "Claim topic does not exist");
         _contract.removeClaimTopic(_claimTopic);
     }
 
@@ -37,6 +40,11 @@ contract ClaimTopicsRegistryFacet is IClaimTopicsRegistry, Modifiers {
     function getClaimTopics() external view override returns (uint256[] memory) {
         ClaimTopicContract storage _contract = ClaimTopicLib.claimTopicStorage()._contract;
         return _contract.getClaimTopics();
+    }
+
+    function hasClaimTopic(uint256 _claimTopic) external view returns (bool) {
+        ClaimTopicContract storage _contract = ClaimTopicLib.claimTopicStorage()._contract;
+        return _contract.hasClaimTopic(_claimTopic);
     }
 
 }

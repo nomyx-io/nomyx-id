@@ -24,18 +24,18 @@ const ClaimTopicsPage = ({ service }) => {
     "create",
   ];
 
-  // useEffect(() => {
-  //   service.getClaimTopics().then((claimTopics) => {
-  //     setClaimTopics(claimTopics.map((claimTopic) => {
-  //       return {
-  //         name: claimTopic.name,
-  //         description: claimTopic.description,
-  //         status: claimTopic.status,
-  //         tabs: ["all", claimTopic.status],
-  //       }
-  //     }))
-  //   })
-  // }, [service])
+  useEffect(() => {
+    service.getClaimTopics().then((claimTopics) => {
+      setClaimTopics(claimTopics.map((claimTopic) => {
+        return {
+          name: claimTopic.name,
+          description: claimTopic.description,
+          status: claimTopic.status,
+          tabs: ["all", claimTopic.status],
+        }
+      }))
+    })
+  }, [service])
 
   const search = true;
 
