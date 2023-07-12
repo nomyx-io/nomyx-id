@@ -18,15 +18,15 @@ task("identities", "get identities")
 // add an identity
 task("add-identity", "add an identity")
     .addParam("symbol", "symbol of diamond token")
-    .addParam("identity", "user address to add")
+    .addParam("address", "user address to add")
     .setAction(async (taskArgs, hre) => {
         // step 1 - deploy the identity
         const identityFactory = await getContractDeployment(hre, 'IdentityFactory');
-        const existingIdentity = await identityFactory.getIdentity(taskArgs.identity);
+        const existingIdentity = await identityFactory.getIdentity(taskArgs.address);
         let identity;
         if (!existingIdentity || BigNumber.from(existingIdentity).isZero()) {
-            let receipt = (await identityFactory.createIdentity(taskArgs.identity)).wait();
-            identity = await identityFactory.getIdentity(taskArgs.identity);
+            let receipt = (await identityFactory.createIdentity(taskArgs.address)).wait();
+            identity = await identityFactory.getIdentity(taskArgs.address);
         } else {
             identity = existingIdentity;
         }
@@ -37,7 +37,7 @@ task("add-identity", "add an identity")
         // get the diamond token
         const diamondToken = await getDiamondToken(hre, taskArgs.symbol);
         // add the identity
-        const tx = await diamondToken.addIdentity(taskArgs.identity, identity);
+        const tx = await diamondToken.addIdentity(taskArgs.address, identity);
         // wait for the tx to be mined
         const receipt = await tx.wait();
         // console.log the receipt

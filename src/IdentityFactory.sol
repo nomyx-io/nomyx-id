@@ -35,13 +35,13 @@ contract IdentityFactory is Initializable, Ownable {
      * create a new identity
      */
     function createIdentity(address ownerAddress) public onlyOwner {
-        // does the identify already exist?
+        require(ownerAddress != address(0), "Invalid owner address");
         require(address(_identities[ownerAddress]) == address(0), "Identity already exists");
         address addr = Clones.clone(_template);
         Identity(addr).initialize(ownerAddress, _identityRegistry, _trustedIssuerRegistry);
         _identities[ownerAddress] = addr;
         _identityList.push(addr);
-        emit IdentityCreated(msg.sender, addr);
+        emit IdentityCreated(ownerAddress, addr);
     }
 
     /**
