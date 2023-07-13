@@ -16,6 +16,26 @@ task("identities", "get identities")
     });
 
 // add an identity
+task("create-identity", "create an identity")
+    .addParam("symbol", "symbol of diamond token")
+    .addParam("address", "user address to add")
+    .setAction(async (taskArgs, hre) => {
+        // step 1 - deploy the identity
+        const identityFactory = await getContractDeployment(hre, 'IdentityFactory');
+        const existingIdentity = await identityFactory.getIdentity(taskArgs.address);
+        let identity = await identityFactory.getIdentity(taskArgs.address);
+        if (!existingIdentity || BigNumber.from(existingIdentity).isZero()) {
+            (await identityFactory.createIdentity(taskArgs.address)).wait();
+            identity = await identityFactory.getIdentity(taskArgs.address);
+        } else {
+            identity = existingIdentity;
+        }
+        // console.log the receipt
+        console.log('Identity: ' + identity);
+    });
+
+
+// add an identity
 task("add-identity", "add an identity")
     .addParam("symbol", "symbol of diamond token")
     .addParam("address", "user address to add")
@@ -25,8 +45,8 @@ task("add-identity", "add an identity")
         const existingIdentity = await identityFactory.getIdentity(taskArgs.address);
         let identity;
         if (!existingIdentity || BigNumber.from(existingIdentity).isZero()) {
-            let receipt = (await identityFactory.createIdentity(taskArgs.address)).wait();
-            identity = await identityFactory.getIdentity(taskArgs.address);
+            console.log("Identity does not exist, exiting...");
+            return;
         } else {
             identity = existingIdentity;
         }

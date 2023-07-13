@@ -7,7 +7,12 @@ const ClaimTopicsPage = ({ service }) => {
 
   const [claimTopics, setClaimTopics] = useState([])
   const tabs = [
-    { id: "all", name: "All" },
+    {
+      id: "all", name: "All", filter: [{
+        key: 'status',
+        value: ['active', 'inactive'],
+      }]
+    },
     { id: "active", name: "Active" },
     { id: "inactive", name: "Inactive" },
   ];
@@ -24,18 +29,18 @@ const ClaimTopicsPage = ({ service }) => {
     "create",
   ];
 
-  useEffect(() => {
-    service.getClaimTopics().then((claimTopics) => {
-      setClaimTopics(claimTopics.map((claimTopic) => {
-        return {
-          name: claimTopic.name,
-          description: claimTopic.description,
-          status: claimTopic.status,
-          tabs: ["all", claimTopic.status],
-        }
-      }))
-    })
-  }, [service])
+  // useEffect(() => {
+  //   service.getClaimTopics().then((claimTopics) => {
+  //     setClaimTopics(claimTopics.map((claimTopic) => {
+  //       return {
+  //         name: claimTopic.name,
+  //         description: claimTopic.description,
+  //         status: claimTopic.status,
+  //         tabs: ["all", claimTopic.status],
+  //       }
+  //     }))
+  //   })
+  // }, [service])
 
   const search = true;
 
@@ -86,6 +91,7 @@ const ClaimTopicsPage = ({ service }) => {
       search={search}
       children={children}
       onAction={handleAction}
+      onGlobalAction={handleAction}
     />);
 
 };
