@@ -8,6 +8,7 @@ import Home from './components/Home.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import './App.css';
+
 import ClaimTopicsPage from './components/ClaimTopicsPage.jsx';
 import TrustedIssuersPage from './components/TrustedIssuersPage.jsx';
 import IdentitiesPage from './components/IdentitiesPage.jsx';
