@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import { ethers } from 'ethers';
 
@@ -70,18 +70,19 @@ function App() {
   const [currentNetwork, setCurrentNetwork] = React.useState(0);
   const [blockchainService, setBlockchainService] = React.useState({});
   const [unsupportedNetworkDialogVisible, setUnsupportedNetworkDialogVisible] = React.useState(false);
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+	if(window.location.pathname.includes("/login")){
+		setLoggedIn(true)
+	}
+  }, [])
+  
 
 	return (
 		<Router>
 			{/* Navigation Menu */}
-			{loggedIn ? (
-				<Routes>
-					<Route path="/login" element={<Login />} />
-				</Routes>
-			) : (
-				<>
-					<UnsupportedNetworkDialog
+			<UnsupportedNetworkDialog
 						currentNetwork={currentNetwork}
 						supportedNetworks={[
 							{chainId: 1, name: 'Mainnet'},
@@ -94,7 +95,7 @@ function App() {
 						onClose={() => {}}
 						onSwitchNetwork={() => {}}
 					/>
-					<div className="topnav">
+					<div className={`topnav p-0 ${loggedIn ? "hidden" : ""}`}>
 						<NavBar
 							isConnected={isConnected}
 							connectBlockchain={async () => {
@@ -130,19 +131,18 @@ function App() {
 							}}
 						/>
 					</div>
-					<div className="content">
+					<div className={`${loggedIn ? "p-0 -ml-4 -mt-[10px] overflow-hidden" : "content"}`}>
 						<Routes>
 							<Route path="/" element={<Home />} />
 							<Route path="/topics" element={<ClaimTopicsPage service={blockchainService} />} />
 							<Route path="/issuers" element={<TrustedIssuersPage service={blockchainService} />} />
 							<Route path="/identities" element={<IdentitiesPage service={blockchainService} />} />
 							<Route path="/claims" element={<ClaimsPage service={blockchainService} />} />
+							<Route path="/login" element={<Login />} />
 						</Routes>
 					</div>
-				</>
-			)}
 		</Router>
-	);
-}
+		)
+						}
 
 export default App;
