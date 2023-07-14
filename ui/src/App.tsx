@@ -12,6 +12,7 @@ import ClaimTopicsPage from './components/ClaimTopicsPage.jsx';
 import TrustedIssuersPage from './components/TrustedIssuersPage.jsx';
 import IdentitiesPage from './components/IdentitiesPage.jsx';
 import ClaimsPage from './components/ClaimsPage.jsx';
+import CreateClaimTopic from './components/CreateClaimTopic.jsx';
 
 import BlockchainService from './services/BlockchainService.js';
 
@@ -130,6 +131,7 @@ function App() {
           <Route path="/issuers" element={<TrustedIssuersPage service={blockchainService} />} />
           <Route path="/identities" element={<IdentitiesPage service={blockchainService} />} />
           <Route path="/claims" element={<ClaimsPage service={blockchainService} />} />
+          <Route path="/topics/create" element={<CreateClaimTopic />} />
         </Routes>
       </div>
     </Router>

@@ -97,9 +97,7 @@ const TrustedIssuersPage = ({ service }) => {
 
     const removeTrustedIssuer = async (issuer) => {
         await service.removeTrustedIssuer(issuer);
-    };[
-
-    ]
+    };
 
     return (
         <div className='p-6'>
