@@ -27,8 +27,8 @@ function DigitalIdentityDetailView() {
             <div className='p-6 max-[500px]:px-4 flex flex-col gap-4'>
                 <div>
                     <p>Identity display name *</p>
-                    <div className='mt-3 relative w-full flex border rounded-lg'>
-                        <Input className='border w-full p-2 rounded-lg text-xl' placeholder='Base KYC' type='text' maxLength={32} onChange={(e) => setDisplayName(e.target.value)} />
+                    <div className='mt-3 relative w-full flex'>
+                        <Input className='w-full p-2 text-xl' placeholder='Base KYC' type='text' maxLength={32} onChange={(e) => setDisplayName(e.target.value)} />
                         <p className='absolute right-5 top-2'>{displayName.length}/32</p>
                     </div>
                 </div>
@@ -43,7 +43,7 @@ function DigitalIdentityDetailView() {
                 <VioletCard data={secondCardData} />
             </div>
             <div className='flex justify-end max-[500px]:justify-center'>
-                <Button className='max-[500px]:w-[50%] my-6 mr-6 bg-[#9952b3] text-white'>Back</Button>
+                <Button className='max-[500px]:w-[50%] rounded-none my-6 mr-6 h-11 px-10 bg-[#9952b3] text-white'>Back</Button>
             </div>
         </div>
     )
