@@ -12,7 +12,7 @@ function CreateClaimTopic() {
                 <div>
                     <p>Claim Topic display name *</p>
                     <div className='mt-3 relative w-full flex border rounded-lg'>
-                        <Input className='border w-full p-2 rounded-lg text-xl' placeholder='Base KYC' type='text' maxLength={32} onChange={(e) => setDisplayName(e.target.value)} />
+                        <Input value={displayName} className='border w-full p-2 rounded-lg text-xl' placeholder='Base KYC' type='text' maxLength={32} onChange={(e) => setDisplayName(e.target.value)} />
                         <p className='absolute right-5 top-2'>{displayName.length}/32</p>
                     </div>
                     <p>User - friendly name that describe the schema. Shown to end-users.</p>
@@ -20,7 +20,7 @@ function CreateClaimTopic() {
                 <div className='mt-10 mb-6'>
                     <p>TopicID hidden name *</p>
                     <div className='mt-3 relative w-full flex border rounded-lg'>
-                        <Input className='border w-full p-2 rounded-lg text-xl' placeholder='1' type='text' maxLength={32} onChange={(e) => setHiddenName(e.target.value)} />
+                        <Input value={hiddenName} className='border w-full p-2 rounded-lg text-xl' placeholder='1' type='text' maxLength={32} disabled style={{ backgroundColor: "white", cursor: "default" }} />
                         <p className='absolute right-5 top-2'>{hiddenName.length}/32</p>
                     </div>
                     <p>Only alphanumeric characters allowed and no spaces. Not seen by end users.</p>
