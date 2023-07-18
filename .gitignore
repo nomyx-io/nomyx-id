@@ -19,3 +19,4 @@ deployments/localhost
 /.dapp
 puck.log
 history.json
+/.idea/

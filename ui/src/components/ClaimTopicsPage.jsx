@@ -6,27 +6,19 @@ import ObjectList from './ObjectList';
 const ClaimTopicsPage = ({ service }) => {
 
   const [claimTopics, setClaimTopics] = useState([])
-  const tabs = [
-    {
-      id: "all", name: "All", filter: [{
-        key: 'status',
-        value: ['active', 'inactive'],
-      }]
-    },
-    { id: "active", name: "Active" },
-    { id: "inactive", name: "Inactive" },
-  ];
+
   const columns = [
-    "Name",
-    "Description",
-    "Status",
+    {label:"Id", name:"id"},
+    {label:"Claim Topic", name:"name", width:"95%"}
   ];
+
   const actions = [
-    "edit",
-    "delete",
+    // "view",
+    {label:"View", name:"view", confirmation:"You are about to do something. Do you wish to proceed?"}
   ];
   const globalActions = [
-    "create",
+    // {label:"Create Claim Topic", name:"create", confirmation:"You are about to do something. Do you wish to proceed?"}
+    {label:"Create Claim Topic", name:"create"}
   ];
 
   // useEffect(() => {
@@ -44,52 +36,35 @@ const ClaimTopicsPage = ({ service }) => {
 
   const search = true;
 
-  const children = [
-    {
-      name: "Object 1",
-      description: "This is object 1",
-      status: "active",
-      tabs: ["all", "active"],
-    },
-    {
-      name: "Object 2",
-      description: "This is object 2",
-      status: "inactive",
-      tabs: ["all", "inactive"],
-    },
-    {
-      name: "Object 3",
-      description: "This is object 3",
-      status: "active",
-      tabs: ["all", "active"],
-    },
-    {
-      name: "Object 4",
-      description: "This is object 4",
-      status: "inactive",
-      tabs: ["all", "inactive"],
-    },
-    {
-      name: "Object 5",
-      description: "This is object 5",
-      status: "active",
-      tabs: ["all", "active"],
-    },
-  ]
+  const data = [];
 
-  const handleAction = (action, object) => {
+  for(let i=1; i<=200; i++){
+    data.push({
+      id: i,
+      name: "Object " + i,
+      description: "This is object " + i,
+      status: "active"
+    });
+  };
+
+
+  const handleAction = async (action, object) => {
     console.log(action, object);
+    //create a claim topic
+    // let claimTopicId = Math.round(Math.random()*10000000);
+    // let response = await blockchainService.addClaimTopic(claimTopicId);
+
   }
 
   return (
     <ObjectList
       title="Claim Topics"
-      tabs={tabs}
+      description="Claim Topics describe the types of Claims that can be created for any Identity"
       columns={columns}
       actions={actions}
       globalActions={globalActions}
       search={search}
-      children={children}
+      data={data}
       onAction={handleAction}
       onGlobalAction={handleAction}
     />);

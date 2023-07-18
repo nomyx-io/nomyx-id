@@ -28,7 +28,7 @@ export const ConfirmationDialog = ({ title, message, onConfirm, onCancel }) => {
     )
 }
 
-const ObjectList = ({ title, description, tabs, columns, actions, globalActions, search, data, pageSize, onAction }) => {
+const ObjectList = ({ title, description, tabs, columns, actions, globalActions, search, data, pageSize = 10, onAction }) => {
 
     const [pageData, setPageData] = useState([]);
     const [filteredData, setFilteredData] = useState(data);
@@ -94,8 +94,21 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
     };
 
     useEffect(() => {
+
+        console.log('filteredData');
+        console.log(filteredData);
+
         const endOffset = itemOffset + pageSize;
-        setPageData(filteredData.slice(itemOffset, endOffset));
+
+        console.log('endOffset');
+        console.log(endOffset);
+
+        let pageData = filteredData.slice(itemOffset, endOffset);
+
+        console.log('pageData');
+        console.log(pageData);
+
+        setPageData(pageData);
         setPageCount(Math.ceil(filteredData.length / pageSize));
     }, [itemOffset, pageSize, filteredData, showDialog]);
 

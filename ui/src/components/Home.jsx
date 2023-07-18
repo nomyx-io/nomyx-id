@@ -1,10 +1,16 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const Home = () => (
-  <div id="home" className="bg-white text-black p-10">
-    <h1 className="text-3xl font-bold mb-4">Welcome to Identity Management App!</h1>
-    <p className="text-lg">This app lets you manage digital identities.</p>
-  </div>
-);
+const Home = () => {
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        navigate("/topics");
+    });
+    return (
+        <></>
+    );
+}
 
 export default Home;
