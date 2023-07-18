@@ -31,6 +31,7 @@ const NavBar = ({
           <ul className="space-y-2 mt-2">
             <li><Link to="/identities/add" className="hover:underline">Add new...</Link></li>
             <li><Link to="/identities" className="hover:underline">List</Link></li>
+            <li><Link to="/identities/id" className="hover:underline">Detail Page</Link></li>
           </ul>
         </li>
         <li className="hover:underline">
@@ -38,7 +39,6 @@ const NavBar = ({
           <ul className="space-y-2 mt-2">
             <li><Link to="/issuers/add" className="hover:underline">Add new...</Link></li>
             <li><Link to="/issuers/list" className="hover:underline">List</Link></li>
-            <li><Link to="/identities/id" className="hover:underline">Detail Page</Link></li>
           </ul>
         </li>
         <li className="hover:underline" style={{ marginLeft: 'auto', display: isConnected ? 'none' : 'block' }}>
