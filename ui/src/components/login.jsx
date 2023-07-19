@@ -1,5 +1,5 @@
 import React from 'react'
-import SideImage from './loginimg.png'
+import SideImage from '../images/loginimg.png'
 import { Button, Input } from 'antd'
 
 export default function Login() {
