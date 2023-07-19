@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { List, Button, Modal, Input, Checkbox } from 'antd';
+import ObjectList from './ObjectList';
 
 const IdentitiesPage = ({ service }) => {
     const [identities, setIdentities] = useState([]);
@@ -13,7 +14,7 @@ const IdentitiesPage = ({ service }) => {
             setIdentities(identities);
         };
 
-        fetchIdentities();
+        // fetchIdentities();
     }, [service]);
 
     const handleAddIdentity = async (identity) => {
@@ -37,10 +38,94 @@ const IdentitiesPage = ({ service }) => {
         setIdentities(newIdentities);
         setSelectedIdentities([]);
     };
+
+    const tabs = [
+		{
+			id: 'all',
+			name: 'All',
+			filter: [
+				{
+					key: 'status',
+					value: ['active', 'inactive'],
+				},
+			],
+		},
+		{id: 'active', name: 'Active'},
+		{id: 'inactive', name: 'Inactive'},
+	];
+	const columns = ['identity', 'claims','KUC ID Account#'];
+	const actions = [
+		{
+			id: 'Add',
+			name: 'Add Claim',
+			onClick: (object) => {
+				console.log('View', object);
+			},
+		},
+		{
+			id: 'remove',
+			name: 'Remove',
+			onClick: (object) => {
+				console.log('View', object);
+			},
+		},
+        {
+			id: 'View',
+			name: 'View',
+			onClick: (object) => {
+				console.log('View', object);
+			},
+		},
+	];
+	const globalActions = ['create'];
+
+	const search = true;
+
+	const children = [
+		{
+			'identity': 'Object 1',
+			'claims': '1',
+            'KUC ID Account#':'2112',
+			status: 'active',
+			tabs: ['all', 'active'],
+		},
+		{
+			'identity': 'Object 2',
+			'claims': '2',
+            'KUC ID Account#':'2112',
+			status: 'inactive',
+			tabs: ['all', 'inactive'],
+		},
+		{
+			'identity': 'Object 3',
+			'claims': '3',
+            'KUC ID Account#':'2112',
+			status: 'active',
+			tabs: ['all', 'active'],
+		},
+		{
+			'identity': 'Object 4',
+			'claims': '4',
+            'KUC ID Account#':'2112',
+			status: 'inactive',
+			tabs: ['all', 'inactive'],
+		},
+		{
+			'identity': 'Object 5',
+			'claims': '5',
+            'KUC ID Account#':'2112',
+			status: 'active',
+			tabs: ['all', 'active'],
+		},
+	];
+	const handleAction = (action, object) => {
+		console.log(action, object);
+	};
+
     return (
         <>
             {/* Update the Button components to use tailwindcss classes */}
-            <Button className="mb-4 bg-blue-500 text-white py-2 px-4 rounded" onClick={() => setIsAddDialogVisible(true)}>Add Identity</Button>
+            {/* <Button className="mb-4 bg-blue-500 text-white py-2 px-4 rounded" onClick={() => setIsAddDialogVisible(true)}>Add Identity</Button>
             <Button className={`mb-4 py-2 px-4 rounded ${selectedIdentities.length === 0 ? 'bg-gray-200' : 'bg-red-500 text-white'}`} onClick={() => setIsRemoveDialogVisible(true)} disabled={selectedIdentities.length === 0}>Remove Identity</Button>
             <AddIdentityDialog visible={isAddDialogVisible} onAddIdentity={handleAddIdentity} onCancel={() => setIsAddDialogVisible(false)} />
             <RemoveIdentityDialog visible={isRemoveDialogVisible} onRemoveIdentity={handleRemoveIdentity} onCancel={() => setIsRemoveDialogVisible(false)} />
@@ -48,6 +133,17 @@ const IdentitiesPage = ({ service }) => {
                 identities={identities}
                 selectedIdentities={selectedIdentities}
                 onSelectedIdentitiesChange={(selected) => setSelectedIdentities(selected)}
+            /> */}
+            <ObjectList
+                title="Identities"
+                tabs={tabs}
+                columns={columns}
+                actions={actions}
+                globalActions={globalActions}
+                search={search}
+                children={children}
+                onAction={handleAction}
+                onGlobalAction={handleAction}
             />
         </>
     );
