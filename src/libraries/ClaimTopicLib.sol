@@ -5,6 +5,7 @@ import "../interfaces/IClaimTopicsRegistry.sol";
 
 struct ClaimTopicContract {
     uint256[] claimTopics;
+    mapping(uint256 => bool) claimTopicIndex;
 }
 
 struct ClaimTopicStorage {
@@ -16,11 +17,6 @@ library ClaimTopicLib {
 
     event ClaimTopicAdded(uint256 indexed claimTopic);
     event ClaimTopicRemoved(uint256 indexed claimTopic);
-
-    modifier onlyOwner(address caller) {
-        require(caller == claimTopicStorage().owner, "Caller is not the owner");
-        _;
-    }
 
     bytes32 internal constant DIAMOND_STORAGE_POSITION = 
         keccak256("diamond.standard.claimTopics.facet.contract");
@@ -34,18 +30,17 @@ library ClaimTopicLib {
 
     function addClaimTopic(
         ClaimTopicContract storage self,
-        uint256 _claimTopic,
-        address caller
-    ) internal onlyOwner(caller) {
+        uint256 _claimTopic
+    ) internal {
         self.claimTopics.push(_claimTopic);
+        self.claimTopicIndex[_claimTopic] = true;
         emit ClaimTopicAdded(_claimTopic);
     }
 
     function removeClaimTopic(
         ClaimTopicContract storage self,
-        uint256 _claimTopic,
-        address caller
-    ) internal onlyOwner(caller) {
+        uint256 _claimTopic
+    ) internal {
         for (uint256 i; i < self.claimTopics.length; i++) {
             if (self.claimTopics[i] == _claimTopic) {
                 self.claimTopics[i] = self.claimTopics[self.claimTopics.length - 1];
@@ -54,10 +49,15 @@ library ClaimTopicLib {
                 return;
             }
         }
+        self.claimTopicIndex[_claimTopic] = false;
         revert("Claim topic not found.");
     }
 
     function getClaimTopics(ClaimTopicContract storage self) internal view returns (uint256[] memory) {
         return self.claimTopics;
+    }
+
+    function hasClaimTopic(ClaimTopicContract storage self, uint256 _claimTopic) internal view returns (bool) {
+        return self.claimTopicIndex[_claimTopic];
     }
 }
