@@ -58,7 +58,7 @@ export const VioletCard = ({ data }) => {
                         <p className='max-[500px]:text-sm'>{item.name}</p>
                         <div className='flex gap-2 justify-center'>
                             <p className='max-[500px]:text-xs'>{item.value}</p>
-                            {item.icon && <img src={require("./copy-icon.png")} alt=""></img>}
+                            {item.icon && <img src={require("../images/copy-icon.png")} alt=""></img>}
                         </div>
                     </div>
                 )
