@@ -2,14 +2,40 @@
 pragma solidity ^0.8.0;
 
 import { IIdentity } from "../interfaces/IIdentity.sol";
+import { Controllable } from "../utilities/Controllable.sol";
+import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import { ITrustedIssuersRegistry } from "../interfaces/ITrustedIssuersRegistry.sol";
 
 /// @title Identity
 /// @notice This contract represents an identity of a user
 /// @dev This contract is used to store the claims of a user
-contract Identity is IIdentity {
+contract Identity is IIdentity, Controllable, Initializable {
 	
 	mapping(bytes32 => Key) keys;
 	mapping(uint256 => bytes32[]) keysByPurpose;
+
+	address identityRegistry;
+	address trustedIssuerRegistry;
+
+	modifier onlyTrustedIssuer() {
+		require(
+			ITrustedIssuersRegistry(trustedIssuerRegistry).isTrustedIssuer(msg.sender),
+			"Sender is not a trusted issuer"
+		);
+		_;
+	}
+
+	/**
+	 * initialize the contract
+	 * @param _owner the owner of the contract
+	 * @param _identityRegistry the identity registry
+	 * @param _trustedIssuerRegistry the trusted issuer registry
+	 */
+	function initialize(address _owner, address _identityRegistry, address _trustedIssuerRegistry) external initializer {
+		_addController(_owner);
+		identityRegistry = _identityRegistry;
+		trustedIssuerRegistry = _trustedIssuerRegistry;
+	}
 
 	struct Key {
 		uint256[] purposes;
@@ -17,7 +43,7 @@ contract Identity is IIdentity {
 		bytes32 key;
 	}
 
-	function addKey(bytes32 _key, uint256 _purpose, uint256 _keyType) external override {
+	function addKey(bytes32 _key, uint256 _purpose, uint256 _keyType) external override onlyTrustedIssuer {
 		require(keys[_key].key != _key, "Key already exists");
 
 		keys[_key].key = _key;
@@ -29,7 +55,7 @@ contract Identity is IIdentity {
 		emit KeyAdded(_key, _purpose, _keyType);
 	}
 
-	function removeKey(bytes32 _key, uint256 _purpose) external override {
+	function removeKey(bytes32 _key, uint256 _purpose) external override onlyTrustedIssuer {
 		require(keys[_key].key == _key, "No such key");
 		for (uint i = 0; i < keys[_key].purposes.length; i++) {
 			if (keys[_key].purposes[i] == _purpose) {
@@ -70,7 +96,7 @@ contract Identity is IIdentity {
 		return _keyHasPurpose(_key, _purpose);
 	}
 
-	function execute(address _to, uint256 _value, bytes calldata _data) external payable returns (uint256 executionId) {
+	function execute(address _to, uint256 _value, bytes calldata _data) external payable onlyTrustedIssuer returns (uint256 executionId) {
 		require(_keyHasPurpose(keccak256(abi.encodePacked(msg.sender)), 1), "Sender does not have rights");
 		(bool success, ) = _to.call{value: _value}(_data);
 		if (success) {
@@ -81,7 +107,7 @@ contract Identity is IIdentity {
 		return executionId;
 	}
 
-	function approve(uint256 _id, bool _approve) external override {
+	function approve(uint256 _id, bool _approve) external override onlyTrustedIssuer {
 		require(_keyHasPurpose(keccak256(abi.encodePacked(msg.sender)), 2), "Sender does not have rights");
 		if (_approve) {
 			emit Approved(_id, true);
@@ -132,7 +158,8 @@ contract Identity is IIdentity {
 		bytes memory _signature,
 		bytes memory _data,
 		string memory _uri
-	) external override returns (uint256 claimRequestId) {
+	) external override onlyTrustedIssuer returns (uint256 claimRequestId) {
+
 		bytes32 claimId = keccak256(abi.encodePacked(_issuer, _topic));
 
 		Claim storage claim = claims[claimId];
@@ -166,7 +193,7 @@ contract Identity is IIdentity {
 		require(false, "Not implemented");
 	}
 
-	function removeClaim(bytes32 _claimId) external override returns (bool success) {
+	function removeClaim(bytes32 _claimId) external override onlyTrustedIssuer returns (bool success) {
 		Claim storage claim = claims[_claimId];
 		require(claim.issuer != address(0), "Claim does not exist");
 		delete claims[_claimId];
@@ -179,13 +206,15 @@ contract Identity is IIdentity {
 	}
 
 	function getExecution(
-		uint256 _id
+		uint256
 	)
 		external
-		view
+		pure
 		override
-		returns (address to, uint256 value, bytes memory data, bool approved, uint256 executionType)
-	{}
+		returns (address, uint256, bytes memory, bool, uint256)
+	{
+		require(false, "Not implemented");
+	}
 
 	 function getClaimTopics() external view override returns (uint256[] memory) {
 		 uint256[] memory _claimTopics = new uint256[](claimTopics.length);

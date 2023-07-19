@@ -15,7 +15,6 @@ import "../../utilities/Modifiers.sol";
 /* solhint-disable two-lines-top-level-separator */
 /* solhint-disable indent */
 
-
 contract ERC721AMetadataFacet is Modifiers {
 
     using MetadataLib for MetadataContract;
