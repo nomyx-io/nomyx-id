@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 
-import './ObjectList.css';
+// import './ObjectList.css';
 
 function pluralize(str) {
     return str + "s";
