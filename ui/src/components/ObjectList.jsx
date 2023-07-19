@@ -1,95 +1,145 @@
-
 import React, { useState } from 'react';
-
 import './ObjectList.css';
-
 function pluralize(str) {
     return str + "s";
 }
 function singularize(str) {
     return str.substring(0, str.length - 1);
 }
-
-export const CreateObjectDialog = ({ title, onSave, onCancel }) => {
+/*
+const tabs = [
+  {
+    id: "all", name: "All", filter: [{
+      key: 'status',
+      value: ['active', 'inactive'],
+    }]
+  },
+  { id: "active", name: "Active", filter: [{
+    key: 'status',
+    value: ['active'],
+    }]
+  },
+  { id: "inactive", name: "Inactive", filter: [{
+    key: 'status',
+    value: ['inactive'],
+    }]
+  },
+];
+const columns = [
+  "Name",
+  "Description",
+  "Status",
+];
+const actions = [{
+    id: "edit",
+    name: "Edit",
+    onClick: (object) => {
+        console.log("Edit", object);
+    }
+},{
+    id: "delete",
+    name: "Delete",
+    onClick: (object) => {
+        console.log("Delete", object);
+    }
+}];
+const globalActions = [{
+    id: "create",
+    name: "Create",
+    dialogContent: <div>Dialog Content</div>,
+    onClick: () => {
+        setShowDialog(true);
+    }
+}];
+*/
+const ObjectDialogChild = ({ children }) => {
+    return (
+        <div className="dialog-content">
+            {children}
+        </div>
+    );
+}
+export const CreateObjectDialog = ({ title, onSave, onCancel, content }) => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-
     const handleSave = () => {
         onSave({ name, description });
     }
-
     const handleCancel = () => {
         onCancel();
     }
-
     return (
         <div>
-            <h2>Create New {title}</h2>
-            <div className="form">
-                <div className="form-group">
-                    <label>Name</label>
-                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-                </div>
-                <div className="form-group">
-                    <label>Description</label>
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-                </div>
-                <div className="form-group">
-                    <button onClick={handleSave}>Save</button>
-                    <button onClick={handleCancel}>Cancel</button>
-                </div>
-            </div>
+            <ObjectDialogChild childred={content} onSave={handleSave} onCancel={handleCancel} />
         </div>
-    )
+    );
 }
-
-const ObjectList = ({ title, tabs, columns, actions, globalActions, search, children, onAction }) => {
+const ObjectList = ({ title, tabs, columns, actions, globalActions, search, children }) => {
     const [activeTab, setActiveTab] = useState(tabs[0].id);
     const [searchText, setSearchText] = useState("");
     const [showDialog, setShowDialog] = useState(false);
     const [dialogContent, setDialogContent] = useState(null);
-
     const handleAction = (action, object) => {
-        if (onAction) {
-            onAction(action, object);
+        const actionObj = actions.find(a => a.id === action);
+        if (actionObj) {
+            if (actionObj.dialogContent) {
+                setShowDialog(true);
+                setDialogContent(actionObj.dialogContent);
+            } else {
+                actionObj.onClick(object);
+            }
         }
     }
-
     const handleTabClick = (tab) => {
         setActiveTab(tab.id);
     }
-
     const handleSearch = (text) => {
         setSearchText(text);
     }
-
-    const handleCreate = () => {
-        setShowDialog(true);
-        setDialogContent(<CreateObjectDialog title={title} onSave={handleSave} onCancel={handleCancel} />);
+    const handleGlobalActionClick = (evt) => {
+        const action = globalActions.find(action => action.name === evt.target.innerText);
+        if (action) {
+            if (action.dialogContent) {
+                setShowDialog(true);
+                setDialogContent(action.dialogContent);
+            } else {
+                action.onClick();
+            }
+        }
     }
-
     const handleSave = (object) => {
         setShowDialog(false);
         setDialogContent(null);
         handleAction("create", object);
     }
-
     const handleCancel = () => {
         setShowDialog(false);
         setDialogContent(null);
     }
-
     const filteredChildren = children.filter(child => {
-        return child.tabs.includes(activeTab) && child.name.toLowerCase().includes(searchText.toLowerCase());
+        if (searchText) {
+            return Object.keys(child).some(key => {
+                return child[key].includes(searchText);
+            });
+        }
+        const isActive = child.tabs.includes(activeTab);
+        const filter = tabs.find(tab => tab.id === activeTab).filter;
+        if (filter) {
+            return filter.every(f => f.value.includes(child[f.key]));
+        }
+        return isActive;
     });
-
     return (
         <div className="container">
             <div className="row">
                 <h1>{title}</h1>
                 {// eslint-disable-next-line
                 }
-                {globalActions.includes("create") && <a href="#" className="btn" onClick={handleCreate}>Create New {singularize(title)}</a>}
+                {globalActions.includes("create") && globalActions.map(action => {
+                    return (
+                        <button key={action.id} onClick={handleGlobalActionClick}>{action.name}</button>
+                    )
+                })}
             </div>
             <h2>A list of your {title}</h2>
             <div className="tabs">
@@ -124,8 +174,11 @@ const ObjectList = ({ title, tabs, columns, actions, globalActions, search, chil
                                     )
                                 })}
                                 <td>
-                                    {actions.includes("edit") && <a href="#" onClick={() => handleAction("edit", child)}>Edit</a>}
-                                    {actions.includes("delete") && <a href="#" onClick={() => handleAction("delete", child)}>Delete</a>}
+                                    {actions.map(action => {
+                                        return (
+                                            <button key={action.id} onClick={() => handleAction(action.id, child)}>{action.name}</button>
+                                        )
+                                    })}
                                 </td>
                             </tr>
                         )
@@ -147,74 +200,4 @@ const ObjectList = ({ title, tabs, columns, actions, globalActions, search, chil
         </div>
     )
 }
-
 export default ObjectList;
-
-// example usage:
-
-// const tabs = [
-//     { id: "all", name: "All" },
-//     { id: "active", name: "Active" },
-//     { id: "inactive", name: "Inactive" },
-// ];
-
-// const columns = [
-//     "Name",
-//     "Description",
-//     "Status",
-// ];
-
-// const actions = [
-//     "edit",
-//     "delete",
-// ];
-
-// const globalActions = [
-//     "create",
-// ];
-
-// const search = true;
-
-// const children = [
-//     {
-//         name: "Object 1",
-//         description: "This is object 1",
-//         status: "active",
-//         tabs: ["all", "active"],
-//     },
-//     {
-//         name: "Object 2",
-//         description: "This is object 2",
-//         status: "inactive",
-//         tabs: ["all", "inactive"],
-//     },
-//     {
-//         name: "Object 3",
-//         description: "This is object 3",
-//         status: "active",
-//         tabs: ["all", "active"],
-//     },
-//     {
-//         name: "Object 4",
-//         description: "This is object 4",
-//         status: "inactive",
-//         tabs: ["all", "inactive"],
-//     },
-//     { 
-//         name: "Object 5",
-//         description: "This is object 5",
-//         status: "active",
-//         tabs: ["all", "active"],
-//     },
-//     ]
-//
-// <ObjectList
-//     title="Objects"
-//     tabs={tabs}
-//     columns={columns}
-//     actions={actions}
-//     globalActions={globalActions}
-//     search={search}
-//     children={children}
-//     onAction={handleAction}
-// />

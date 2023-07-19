@@ -17,13 +17,16 @@ const ClaimTopicsPage = ({ service }) => {
     { id: "inactive", name: "Inactive" },
   ];
   const columns = [
-    "Name",
-    "Description",
-    "Status",
+    "claim topic",
+    "claim topic id",
   ];
-  const actions = [
-    "edit",
-    "delete",
+  const actions = [{
+	id: "view",
+    name: "View",
+    onClick: (object) => {
+        console.log("View", object);
+    }
+	}
   ];
   const globalActions = [
     "create",
@@ -46,37 +49,36 @@ const ClaimTopicsPage = ({ service }) => {
 
   const children = [
     {
-      name: "Object 1",
-      description: "This is object 1",
+      'claim topic': "Object 1",
+      'claim topic id': "This is object 1",
       status: "active",
       tabs: ["all", "active"],
     },
     {
-      name: "Object 2",
-      description: "This is object 2",
+      'claim topic': "Object 2",
+      'claim topic id': "This is object 2",
       status: "inactive",
       tabs: ["all", "inactive"],
     },
     {
-      name: "Object 3",
-      description: "This is object 3",
+      'claim topic': "Object 3",
+      'claim topic id': "This is object 3",
       status: "active",
       tabs: ["all", "active"],
     },
     {
-      name: "Object 4",
-      description: "This is object 4",
+      'claim topic': "Object 4",
+      'claim topic id': "This is object 4",
       status: "inactive",
       tabs: ["all", "inactive"],
     },
     {
-      name: "Object 5",
-      description: "This is object 5",
+      'claim topic': "Object 5",
+      'claim topic id': "This is object 5",
       status: "active",
       tabs: ["all", "active"],
-    },
+    }
   ]
-
   const handleAction = (action, object) => {
     console.log(action, object);
   }
