@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { List, Button, Modal, Checkbox, Form, InputNumber } from 'antd';
+import ObjectList from "./ObjectList";
 
 const AddTrustedIssuerDialog = ({
     service,
@@ -101,9 +102,81 @@ const TrustedIssuersPage = ({ service }) => {
 
     ]
 
+    const tabs = [
+		{
+			id: 'all',
+			name: 'All',
+			filter: [
+				{
+					key: 'status',
+					value: ['active', 'inactive'],
+				},
+			],
+		},
+		{id: 'active', name: 'Active'},
+		{id: 'inactive', name: 'Inactive'},
+	];
+	const columns = ['Trusted issuer', 'Managed claim topic'];
+	const actions = [
+		{
+			id: 'update',
+			name: 'Update claim topics',
+			onClick: (object) => {
+				console.log('View', object);
+			},
+		},
+		{
+			id: 'viewids',
+			name: 'View IDs',
+			onClick: (object) => {
+				console.log('View', object);
+			},
+		},
+	];
+	const globalActions = ['create'];
+
+	const search = true;
+
+	const children = [
+		{
+			'Trusted issuer': 'Object 1',
+			'Managed claim topic': 'This is object 1',
+			status: 'active',
+			tabs: ['all', 'active'],
+		},
+		{
+			'Trusted issuer': 'Object 2',
+			'Managed claim topic': 'This is object 2',
+			status: 'inactive',
+			tabs: ['all', 'inactive'],
+		},
+		{
+			'Trusted issuer': 'Object 3',
+			'Managed claim topic': 'This is object 3',
+			status: 'active',
+			tabs: ['all', 'active'],
+		},
+		{
+			'Trusted issuer': 'Object 4',
+			'Managed claim topic': 'This is object 4',
+			status: 'inactive',
+			tabs: ['all', 'inactive'],
+		},
+		{
+			'Trusted issuer': 'Object 5',
+			'Managed claim topic': 'This is object 5',
+			status: 'active',
+			tabs: ['all', 'active'],
+		},
+	];
+	const handleAction = (action, object) => {
+		console.log(action, object);
+	};
+
+
     return (
         <div className='p-6'>
-            <Button type='primary' onClick={() => setVisibility({ ...isVisible, add: true })}
+            {/* <Button type='primary' onClick={() => setVisibility({ ...isVisible, add: true })}
                 style={{
                     borderRadius: '5px',
                     backgroundColor: '#1a73e8',
@@ -155,6 +228,17 @@ const TrustedIssuersPage = ({ service }) => {
                 setVisibility={setVisibility}
                 issuer={selectedIssuer}
                 removeTrustedIssuer={removeTrustedIssuer}
+            /> */}
+            <ObjectList
+                title="Trusted issuer"
+                tabs={tabs}
+                columns={columns}
+                actions={actions}
+                globalActions={globalActions}
+                search={search}
+                children={children}
+                onAction={handleAction}
+                onGlobalAction={handleAction}
             />
         </div>
     );
