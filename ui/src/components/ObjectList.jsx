@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import ReactPaginate from 'react-paginate';
 
 import './ObjectList.css';
 
@@ -43,8 +44,13 @@ export const CreateObjectDialog = ({ title, onSave, onCancel }) => {
     )
 }
 
-const ObjectList = ({ title, tabs, columns, actions, globalActions, search, children, onAction }) => {
-    const [activeTab, setActiveTab] = useState(tabs[0].id);
+const ObjectList = ({ title, description, tabs, columns, actions, globalActions, search, data, pageSize, onAction }) => {
+
+    const [pageData, setPageData] = useState([]);
+    const [filteredData, setFilteredData] = useState(data);
+    const [pageCount, setPageCount] = useState(0);
+    const [itemOffset, setItemOffset] = useState(0);
+    const [activeTab, setActiveTab] = useState(tabs ? tabs[0].id : null);
     const [searchText, setSearchText] = useState("");
     const [showDialog, setShowDialog] = useState(false);
     const [dialogContent, setDialogContent] = useState(null);
@@ -61,6 +67,24 @@ const ObjectList = ({ title, tabs, columns, actions, globalActions, search, chil
 
     const handleSearch = (text) => {
         setSearchText(text);
+
+        let filteredData = data.filter(record => {
+            /*            return tabs ?
+                            record.tabs.includes(activeTab) && record.name.toLowerCase().includes(searchText.toLowerCase()) :
+                            record.name.toLowerCase().includes(searchText.toLowerCase());*/
+
+            for (let prop in record) {
+
+                if(typeof record[prop] == 'string' && record[prop].includes(text)){
+                    return record;
+                }else if(record[prop] == text){
+                    return record;
+                }
+            }
+
+        });
+
+        setFilteredData(filteredData);
     }
 
     const handleCreate = () => {
@@ -79,65 +103,122 @@ const ObjectList = ({ title, tabs, columns, actions, globalActions, search, chil
         setDialogContent(null);
     }
 
-    const filteredChildren = children.filter(child => {
-        return child.tabs.includes(activeTab) && child.name.toLowerCase().includes(searchText.toLowerCase());
-    });
+    // Invoke when user click to request another page.
+    const handlePageClick = (event) => {
+        const newOffset = (event.selected * pageSize) % data.length;
+        console.log(
+            `User requested page number ${event.selected}, which is offset ${newOffset}`
+        );
+        setItemOffset(newOffset);
+    };
+
+    useEffect(() => {
+        const endOffset = itemOffset + pageSize;
+        setPageData(filteredData.slice(itemOffset, endOffset));
+        setPageCount(Math.ceil(filteredData.length / pageSize));
+    }, [itemOffset, pageSize, filteredData]);
 
     return (
         <div className="container">
-            <div className="row">
+
+            {tabs && (
+                <div className="tabs">
+                    {tabs.map(tab => {
+                        return (
+                            <a key={tab.id} href="#" className={tab.id === activeTab ? "active" : ""} onClick={() => handleTabClick(tab)}>{tab.name}</a>
+                        )
+                    })}
+                </div>
+            )}
+
+            <header className="table-header">
+
+
                 <h1>{title}</h1>
-                {// eslint-disable-next-line
-                }
-                {globalActions.includes("create") && <a href="#" className="btn" onClick={handleCreate}>Create New {singularize(title)}</a>}
-            </div>
-            <h2>A list of your {title}</h2>
-            <div className="tabs">
-                {tabs.map(tab => {
-                    return (
-                        <a key={tab.id} href="#" className={tab.id === activeTab ? "active" : ""} onClick={() => handleTabClick(tab)}>{tab.name}</a>
-                    )
-                })}
-            </div>
-            {search && <div className="search">
-                <input type="text" placeholder="Search..." onChange={(e) => handleSearch(e.target.value)} />
-                <button>Search</button>
-            </div>}
+
+                <h2>{description ? description : 'A list of your ' + title}</h2>
+
+                <section className="controls">
+
+                    {search && <div className="search">
+                        <input type="text" placeholder="Search..." onKeyUp={(e) => handleSearch(e.target.value)} />
+                    </div>}
+
+                    {globalActions && (
+                        <div className="global-actions">
+                            {globalActions.map(globalAction => {
+                                return (
+                                    <button key={globalAction} className={"btn global-action-" + globalAction} onClick={() => handleAction(globalAction)}>{globalAction}</button>
+                                )
+                            })}
+                        </div>
+                    )}
+
+                </section>
+
+            </header>
+
+
+
             <table>
                 <thead>
                     <tr>
                         {columns.map(column => {
+
+                            let fieldName = column;
+                            let label = column;
+                            let style = {};
+
+                            if(typeof column === "object"){
+                                fieldName = column.name;
+                                label = column.label;
+                                style = column.width ? {width: column.width} : {};
+                            }
+
                             return (
-                                <th key={column}>{column}</th>
+                                <th key={fieldName} style={style}>{label}</th>
                             )
                         })}
-                        <th>Actions</th>
+                        <th key={title + "-actions"}>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredChildren.map(child => {
+                    {pageData.map(record => {
                         return (
-                            <tr key={child.name}>
+                            <tr key={record.id}>
                                 {columns.map(column => {
+                                    let fieldName = typeof column === "object" ? column.name : column;
+                                    let key = fieldName + '-' + record.id;
                                     return (
-                                        <td key={column}>{child[column]}</td>
+                                        <td key={key}>{record[fieldName]}</td>
                                     )
                                 })}
-                                <td>
-                                    {actions.includes("edit") && <a href="#" onClick={() => handleAction("edit", child)}>Edit</a>}
-                                    {actions.includes("delete") && <a href="#" onClick={() => handleAction("delete", child)}>Delete</a>}
+                                <td key={"actions" + record.id}>
+                                    {/*{actions.includes("edit") && <a href="#" onClick={() => handleAction("edit", record)}>Edit</a>}
+                                    {actions.includes("delete") && <a href="#" onClick={() => handleAction("delete", record)}>Delete</a>}*/}
+
+                                    {actions.map(action => {
+                                        return (
+                                            <a key={record.id + "-action-" + action} href="#" onClick={() => handleAction(action, record)}>{action}</a>
+                                        )
+                                    })}
                                 </td>
                             </tr>
                         )
                     })}
                 </tbody>
             </table>
+
             <div className="pagination">
-                <a href="#">Previous</a>
-                <a href="#">1</a>
-                <a href="#" className="active">2</a>
-                <a href="#">3</a>
-                <a href="#">Next</a>
+                <ReactPaginate
+                    breakLabel="&#8230;"
+                    previousLabel="&#9664;"
+                    nextLabel="&#9658;"
+                    onPageChange={handlePageClick}
+                    pageRangeDisplayed={5}
+                    pageCount={pageCount}
+                    renderOnZeroPageCount={null}
+                />
             </div>
             {showDialog && <div className="dialog">
                 <div className="dialog-content">

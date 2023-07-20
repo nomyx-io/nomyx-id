@@ -1,7 +1,6 @@
 * {
     box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
-    padding: 5px;
 }
 
 body {
@@ -13,7 +12,7 @@ body {
 
 .container {
     margin: 2% auto;
-    padding: 30px 10px;
+    padding: 30px 20px;
     max-width: 960px;
     background-color: #fff;
     border-radius: 8px;
@@ -23,35 +22,77 @@ body {
 h1,
 h2,
 th {
-    color: #0645AD;
-    /* Accent Color */
     letter-spacing: 0.05em;
 }
 
 h2 {
-    color: #666;
     font-weight: 300;
 }
 
-.row,
-.tabs,
-.pagination {
+.table-header > * {
+    margin-bottom: 15px;
+}
+
+.table-header h1{
+    font-size: 1.3em;
+}
+
+.table-header h2{
+    font-size: 0.8em;
+}
+
+.table-header .controls {
+    display: flex;
+}
+
+.table-header .controls .btn {
+    min-height: 22px;
+    font-size: 0.8em;
+}
+
+.table-header .controls .search {
+    width:100%;
+    margin-right: 10px;
+}
+
+.tabs{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+
 }
+
+.pagination ul {
+    display: flex;
+    padding: 8px 0;
+    margin: 0.1em 0;
+    justify-content: center;
+}
+
+.pagination ul li {
+    margin:0 2px;
+    font-size: 0.9em;
+}
+
+.pagination ul li.previous a, .pagination ul li.next a {
+    padding: 7px 6px 7px 8px;
+    line-height: 20px;
+    font-size: 0.6em;
+}
+
+
 
 .btn {
     text-decoration: none;
     color: #fff;
     /* Changing text color to White */
     background-color: #0645AD;
-    border-radius: 14px;
-    padding: 12px;
+    border-radius: 20px;
+    padding: 3px 15px;
     transition: 0.5s;
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
+    white-space: nowrap;
 }
 
 .btn:hover {
@@ -61,26 +102,23 @@ h2 {
 
 th,
 td {
-    padding: 10px 15px;
-    text-align: center;
+    padding: 5px 10px;
+    text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
-td:last-child {
-    text-align: center;
+th:last-child, td:last-child {
+    width: 1%;
+    white-space: nowrap;
 }
 
 td a {
     margin-right: 1rem;
-    background-color: #04C2C930;
-    border: 1px solid #04C2C9;
     color: #0645AD;
-    padding: 10px 20px;
-    border-radius: 25px;
     text-decoration: none;
     transition: 0.5s all;
     line-height: 0.2;
-    padding: 5px 10px;
+    user-select: none;
 }
 
 tr:hover {
@@ -92,10 +130,20 @@ tr:hover {
 .search button {
     background-color: #EEE;
     color: #444;
-    padding: 10px 20px;
-    border-radius: 10px;
+    padding: 7px;
+    border-radius: 27px;
     text-decoration: none;
     transition: 0.5s all;
+    white-space: nowrap;
+    overflow: hidden;
+    min-width: 35px;
+    display: inline-block;
+    text-align: center;
+    user-select: none;
+}
+
+.pagination li.selected a{
+    background-color: #ccc;
 }
 
 .tabs a {
@@ -116,16 +164,8 @@ tr:hover {
 }
 
 .search input[type="text"] {
-    border: none;
-    padding: 10px 20px;
+    padding: 2px 15px;
     border-radius: 25px;
-    width: 75%;
-    margin-right: 1rem;
-    outline: none;
-}
-
-.search button {
-    cursor: pointer;
 }
 
 .dialog {
@@ -186,7 +226,6 @@ input {
     border-radius: 4px;
     padding: 10px 20px;
     width: 100%;
-    margin-bottom: 1rem;
     outline: none;
 }
 
