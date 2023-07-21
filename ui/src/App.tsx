@@ -132,7 +132,7 @@ function App() {
 							}}
 						/>
 					</div>
-					<div className={`${loggedIn ? "p-0 -ml-4 -mt-[10px] overflow-hidden" : "content"}`}>
+					<div className={`${loggedIn ? "p-0 -ml-4 overflow-hidden" : "content"}`}>
 						<Routes>
 							<Route path="/" element={<Home />} />
 							<Route path="/topics" element={<ClaimTopicsPage service={blockchainService} />} />
