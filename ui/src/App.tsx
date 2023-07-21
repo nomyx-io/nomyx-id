@@ -15,6 +15,7 @@ import IdentitiesPage from './components/IdentitiesPage.jsx';
 import ClaimsPage from './components/ClaimsPage.jsx';
 
 import BlockchainService from './services/BlockchainService.js';
+import EditClaim  from './components/EditClaim.jsx';
 
 function UnsupportedNetworkDialog(props: any) {
 
@@ -131,6 +132,7 @@ function App() {
           <Route path="/issuers" element={<TrustedIssuersPage service={blockchainService} />} />
           <Route path="/identities" element={<IdentitiesPage service={blockchainService} />} />
           <Route path="/claims" element={<ClaimsPage service={blockchainService} />} />
+          <Route path="/claims/create" element={<EditClaim service={blockchainService} />} />
         </Routes>
       </div>
     </Router>

@@ -22,7 +22,7 @@ const NavBar = ({
         <li className="hover:underline">
           <Link to="/claims">Claims</Link>
           <ul className="space-y-2 mt-2">
-            <li><Link to="/claims/add" className="hover:underline">Add new...</Link></li>
+            <li><Link to="/claims/create" className="hover:underline">Add new...</Link></li>
             <li><Link to="/claims" className="hover:underline">List</Link></li>
           </ul>
         </li>
