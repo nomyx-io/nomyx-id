@@ -15,7 +15,7 @@ import IdentitiesPage from './components/IdentitiesPage.jsx';
 import ClaimsPage from './components/ClaimsPage.jsx';
 
 import BlockchainService from './services/BlockchainService.js';
-import Login from './components/Login.jsx';
+import Login from './components/LoginPage.jsx';
 
 function UnsupportedNetworkDialog(props: any) {
 
