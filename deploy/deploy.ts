@@ -43,6 +43,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		'SVGTemplatesLib',
 		'TrustedIssuerLib',
 		'UInt256Set',
+		'IdentityFactory',
+		'Identity',
 	];
 	// base set of contracts to deploy for an erc721
 	const facets: any = [
@@ -103,11 +105,18 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	);
 
 	const dt = await getDiamondToken(hre, 'TOKEN');
-
 	const tokenAddress = dt.address;
+
+	const identityFactory = await getContractDeployment(hre, 'IdentityFactory');
+	await identityFactory.initialize( // init the identity factory
+		tokenAddress, tokenAddress
+	);
+
+
 	const chainId = await hre.getChainId();
 	const configObject = {
 		[chainId]: {
+			identityFactory: identityFactory.address,
 			factory: diamondFactory.address,
 			contract: tokenAddress,
 			owner: signerAddress,

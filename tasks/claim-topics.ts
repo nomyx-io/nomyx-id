@@ -15,7 +15,7 @@ task("claim-topics", "get claim topics")
     .addParam("symbol", "symbol of diamond token")
     .setAction(async (taskArgs, hre) => {
         // get the diamond token
-        const diamondToken = await getDiamondToken(hre, taskArgs.address);
+        const diamondToken = await getDiamondToken(hre, taskArgs.symbol);
         // get the claim topics
         const claimTopics = await diamondToken.getClaimTopics();
         // console.log the claim topics

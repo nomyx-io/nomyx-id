@@ -21,11 +21,6 @@ library TrustedIssuerLib {
 
     bytes32 internal constant DIAMOND_STORAGE_POSITION = keccak256("diamond.nomyx.lenderlabs.TrustedIssuerStorage.storage");
 
-    modifier onlyOwner() {
-        require(msg.sender == trustedIssuerStorage().trustedIssuerContract.owner, "Caller is not the owner");
-        _;
-    }
-
     /// @notice Get the storage struct for the TrustedIssuerRegistry
     /// @return ds TrustedIssuerStorage struct for the TrustedIssuerRegistry
     function trustedIssuerStorage() internal pure returns (TrustedIssuerStorage storage ds) {

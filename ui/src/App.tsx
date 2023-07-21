@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import { ethers } from 'ethers';
 
@@ -8,6 +8,7 @@ import Home from './components/Home.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import './App.css';
+
 import ClaimTopicsPage from './components/ClaimTopicsPage.jsx';
 import TrustedIssuersPage from './components/TrustedIssuersPage.jsx';
 import IdentitiesPage from './components/IdentitiesPage.jsx';
@@ -15,6 +16,7 @@ import ClaimsPage from './components/ClaimsPage.jsx';
 
 import BlockchainService from './services/BlockchainService.js';
 import CreateDigitalId from './components/CreateDigitalId.jsx';
+import Login from './components/LoginPage.jsx';
 
 function UnsupportedNetworkDialog(props: any) {
 
@@ -69,74 +71,80 @@ function App() {
   const [currentNetwork, setCurrentNetwork] = React.useState(0);
   const [blockchainService, setBlockchainService] = React.useState({});
   const [unsupportedNetworkDialogVisible, setUnsupportedNetworkDialogVisible] = React.useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
 
+  useEffect(() => {
+	if(window.location.pathname.includes("/login")){
+		setLoggedIn(true)
+	}
+  }, [])
+  
 
-  return (
-    <Router>
-      {/* Navigation Menu */}
-      <UnsupportedNetworkDialog
-        currentNetwork={currentNetwork}
-        supportedNetworks={[
-          { chainId: 1, name: "Mainnet" },
-          { chainId: 4, name: "Rinkeby" },
-          { chainId: 3, name: "Ropsten" },
-          { chainId: 5, name: "Goerli" },
-          { chainId: 42, name: "Kovan" },
-        ]}
-        visible={unsupportedNetworkDialogVisible}
-        onClose={() => { }}
-        onSwitchNetwork={() => { }}
-      />
-      <div className="topnav">
-        <NavBar
-          isConnected={isConnected}
-          connectBlockchain={async () => {
-            if ((window as any).ethereum) {
-              try {
-                const provider = new ethers.providers.Web3Provider((window as any).ethereum);
-                let jsonConfig: any = await import(`./config.json`);
+	return (
+		<Router>
+			{/* Navigation Menu */}
+			<UnsupportedNetworkDialog
+						currentNetwork={currentNetwork}
+						supportedNetworks={[
+							{chainId: 1, name: 'Mainnet'},
+							{chainId: 4, name: 'Rinkeby'},
+							{chainId: 3, name: 'Ropsten'},
+							{chainId: 5, name: 'Goerli'},
+							{chainId: 42, name: 'Kovan'},
+						]}
+						visible={unsupportedNetworkDialogVisible}
+						onClose={() => {}}
+						onSwitchNetwork={() => {}}
+					/>
+					<div className={`topnav p-0 ${loggedIn ? "hidden" : ""}`}>
+						<NavBar
+							isConnected={isConnected}
+							connectBlockchain={async () => {
+								if ((window as any).ethereum) {
+									try {
+										const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+										let jsonConfig: any = await import(`./config.json`);
 
-                const network = await provider.getNetwork();
-                const chainId = network.chainId;
-                const config = jsonConfig[`${chainId}` as any];
+										const network = await provider.getNetwork();
+										const chainId = network.chainId;
+										const config = jsonConfig[`${chainId}` as any];
 
-                setCurrentNetwork(network.chainId);
-                if (!config) {
-                  setUnsupportedNetworkDialogVisible(true);
-                  setIsConnected(false);
-                  return;
-                }
+										setCurrentNetwork(network.chainId);
+										if (!config) {
+											setUnsupportedNetworkDialogVisible(true);
+											setIsConnected(false);
+											return;
+										}
 
-                setIsConnected(true);
+										setIsConnected(true);
 
-                const _blockchainService = new BlockchainService(provider, config.contract);
-                setBlockchainService(_blockchainService);
-
-              } catch (err) {
-                console.log(err);
-              }
-            } else {
-              console.log('Please install MetaMask!');
-            }
-          }}
-          disconnectBlockchain={() => {
-            setIsConnected(false);
-          }}
-        />
-      </div>
-      <div className="content">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/topics" element={<ClaimTopicsPage service={blockchainService} />} />
-          <Route path="/issuers" element={<TrustedIssuersPage service={blockchainService} />} />
-          <Route path="/identities" element={<IdentitiesPage service={blockchainService} />} />
-          <Route path="/claims" element={<ClaimsPage service={blockchainService} />} />
-          <Route path="/identities/create" element={<CreateDigitalId />} />
-        </Routes>
-      </div>
-    </Router>
-  );
-}
+										const _blockchainService = new BlockchainService(provider, config.contract);
+										setBlockchainService(_blockchainService);
+									} catch (err) {
+										console.log(err);
+									}
+								} else {
+									console.log('Please install MetaMask!');
+								}
+							}}
+							disconnectBlockchain={() => {
+								setIsConnected(false);
+							}}
+						/>
+					</div>
+					<div className={`${loggedIn ? "p-0 -ml-4 -mt-[10px] overflow-hidden" : "content"}`}>
+						<Routes>
+							<Route path="/" element={<Home />} />
+							<Route path="/topics" element={<ClaimTopicsPage service={blockchainService} />} />
+							<Route path="/issuers" element={<TrustedIssuersPage service={blockchainService} />} />
+							<Route path="/identities" element={<IdentitiesPage service={blockchainService} />} />
+							<Route path="/claims" element={<ClaimsPage service={blockchainService} />} />
+							<Route path="/login" element={<Login />} />
+							<Route path="/identities/create" element={<CreateDigitalId />} />
+						</Routes>
+					</div>
+		</Router>
+		)
+						}
 
 export default App;
-

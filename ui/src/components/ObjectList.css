@@ -1,237 +1,261 @@
-/* Updated CSS Stylesheet */
+* {
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
 
 body {
-    font-family: 'Roboto', sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    color: #4a4a4a;
     margin: 0;
+    padding: 0;
+    background: #F8F8F8;
+    color: #333;
 }
 
-/* Page */
-.page {
-    max-width: 820px;
-    padding: 30px;
-    margin: auto;
-    border: 1px solid #ddd;
-    box-shadow: 0px 0px 8px rgb(0 0 0 / 15%);
-    background: #f1f1f1;
+h1,
+h2,
+th {
+    letter-spacing: 0.05em;
 }
 
-/* Page Title */
-.page h1 {
-    font-size: 28px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #4a4a4a;
-
+h1{
+    font-size: 1.3em;
 }
 
-/* Page Subtitle */
-.page h2 {
-    font-size: 20px;
-    font-weight: 500;
-    margin-bottom: 30px;
-    color: #6c757d;
-    text-align: left;
-    display: inline-block;
+h2 {
+    font-weight: 300;
 }
 
-/* Create Object Button */
-.page .create {
-    padding: 12px 25px;
-    background: #6c5ce7;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    transition: background-color .3s;
-    float: right;
-}
-
-.page .create:hover,
-.page .create:focus {
-    background-color: #5d46b5;
-    outline: none;
-}
-
-/* Tabs */
-.page .tabs a {
-    margin-right: 10px;
-    margin-bottom: 20px;
-    display: inline-block;
-    padding: 12px 25px;
-    background: #6c5ce7;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px 5px 0 0;
-    transition: background-color .3s;
-}
-
-.page .tabs a.active,
-.page .tabs a:hover,
-.page .tabs a:focus {
-    background-color: #5d46b5;
-    outline: none;
-}
-
-/* Search */
-.page .search input {
+table {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #cbd5e0;
+}
+
+thead {
+    background: #EEE;
+    color: #444;
+}
+
+tbody tr:nth-child(even) {
+    background: #F8F8F8;
+}
+
+th,
+td {
+    padding: 5px 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th:last-child, td:last-child {
+    width: 1%;
+    white-space: nowrap;
+}
+
+td a {
+    margin-right: 1rem;
+    color: #0645AD;
+    text-decoration: none;
+    transition: 0.5s all;
+    line-height: 0.2;
+    user-select: none;
+}
+
+tr:hover {
+    background-color: #F8F8F8;
+}
+
+.container {
+    margin: 2% auto;
+    padding: 30px 20px;
+    max-width: 960px;
+    background-color: #fff;
     border-radius: 8px;
-    transition: border-color .3s;
-    margin-bottom: 20px;
-    margin-top: 20px;
+    box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.1);
 }
 
-.page .search input:focus {
-    border-color: #6c5ce7;
-    box-shadow: 0px 0px 0px 2px rgba(108, 92, 231, .5);
-    outline: none;
+.container .empty{
+    height: 350px;
+    text-align: center;
+    padding-top: 50px;
 }
 
-/* Table */
-.page table {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-.page table thead th {
-    text-align: left;
-    padding: 15px;
-    background-color: #6c5ce7;
-    color: #fff;
-    border-right: 1px solid rgba(255, 255, 255, .15);
-}
-
-.page table tbody td {
-    padding: 15px;
-    border-bottom: 1px solid #e2e2e2;
-}
-
-.page table tbody td:last-child {
-    text-align: right;
-}
-
-.page table tbody td a {
-    padding: 8px 15px;
-    background-color: #6c5ce7;
-    color: #fff;
+.btn {
     text-decoration: none;
-    border-radius: 5px;
-    transition: background-color .3s;
-}
-
-.page table tbody td a:hover,
-.page table tbody td a:focus {
-    background-color: #5d46b5;
-    outline: none;
-}
-
-/* Pagination */
-.page .pagination a {
-    padding: 8px 15px;
-    background-color: #6c5ce7;
     color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color .3s;
+    /* Changing text color to White */
+    background-color: #0645AD;
+    border-radius: 20px;
+    padding: 3px 15px;
+    transition: 0.5s;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    white-space: nowrap;
 }
 
-.page .pagination a:hover,
-.page .pagination a:focus {
-    background-color: #5d46b5;
-    outline: none;
+.btn.cancel{
+    color: #444;
+    background-color: #eee;
 }
 
-/* Dialog */
-.dialog {
-    display: none;
-    /* Should be toggled by JS */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, .6);
-    z-index: 9999;
+.btn:hover {
+    background-color: #0466b9;
+}
+
+.table-header > * {
+    margin-bottom: 15px;
+}
+
+.table-header h2{
+    font-size: 0.8em;
+}
+
+.table-header .controls {
+    display: flex;
+}
+
+.table-header .controls .btn {
+    min-height: 22px;
+    font-size: 0.8em;
+}
+
+.table-header .controls .search {
+    width:100%;
+    margin-right: 10px;
+    position: relative;
+}
+
+.table-header .controls .search input{
+    position: relative;
+}
+
+.table-header .controls .search::before {
+    content: "";
+    background-image: url("../../public/search.png");
+    background-size: 17px;
+    position: absolute;
+    top: 6px;
+    left: 7px;
+    width: 20px;
+    height: 20px;
+    opacity: 0.25;
+    z-index: 2;
+    background-repeat: no-repeat;
+}
+
+.table-header .controls .search input[type="text"] {
+    padding: 2px 15px 2px 28px;
+    border-radius: 25px;
+}
+
+.tabs{
+    display: flex;
+    justify-content: space-between;
     align-items: center;
+
+}
+
+.tabs a {
+    background-color: #EEE;
+    color: #444;
+    padding: 10px 20px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    text-decoration: none;
+    transition: 0.5s all;
+    margin-right: 1rem;
+}
+
+.pagination ul {
+    display: flex;
+    padding: 8px 0;
+    margin: 0.1em 0;
     justify-content: center;
+}
+
+.pagination ul li {
+    margin:0 2px;
+    font-size: 0.9em;
+}
+
+.pagination li.selected a{
+    background-color: #ccc;
+}
+
+.pagination ul li.previous a, .pagination ul li.next a {
+    padding: 7px 6px 7px 8px;
+    line-height: 20px;
+    font-size: 0.6em;
+}
+
+.pagination a,
+.tabs a,
+.search button {
+    background-color: #EEE;
+    color: #444;
+    padding: 7px;
+    border-radius: 27px;
+    text-decoration: none;
+    transition: 0.5s all;
+    white-space: nowrap;
+    overflow: hidden;
+    min-width: 35px;
+    display: inline-block;
+    text-align: center;
+    user-select: none;
+}
+
+.tabs {
+    float: left;
+}
+
+.tabs a {
+    padding: 10px 20px;
+    text-decoration: none;
+    transition: 0.5s all;
+}
+
+.tabs a.active {
+    background-color: #DDD;
+    color: #444;
+}
+
+.tabs a:hover {
+    background-color: #DDD;
+}
+
+.pagination a:hover,
+.tabs a:hover,
+.search button:hover {
+    background-color: #DDD;
+}
+
+.dialog {
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 .dialog-content {
     background: #fff;
-    padding: 30px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 30px rgba(0, 0, 0, .2);
-    width: 90%;
-    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 4px;
+    max-width: 500px;
 }
 
-.dialog-content h2 {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #4a4a4a;
+.dialog-content > *{
+    margin-bottom: 15px;
 }
 
-.dialog-content label {
-    color: #6c757d;
+.dialog-content .dialog-buttons{
+    margin-bottom: 0;
+    text-align: right;
 }
 
-.dialog-content input {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #cbd5e0;
-    border-radius: 5px;
-    transition: border-color .3s;
-}
-
-.dialog-content input:focus {
-    border-color: #6c5ce7;
-    box-shadow: 0px 0px 0px 2px rgba(108, 92, 231, .5);
-    outline: none;
-}
-
-.dialog-content .buttons a {
-    padding: 10px 20px;
-    background-color: #6c5ce7;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color .3s;
-}
-
-.dialog-content .buttons a.cancel {
-    background: #bbb;
-    border: none;
-}
-
-.dialog-content .buttons a:hover,
-.dialog-content .buttons a:focus {
-    background-color: #5d46b5;
-    outline: none;
-}
-
-.tabs {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.tabs a {
-    margin-right: 10px;
-    margin-bottom: 20px;
-    display: inline-block;
-    padding: 12px 25px;
-    background: #6c5ce7;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px 5px 0 0;
-    transition: background-color .3s;
+.dialog-content .dialog-buttons > *{
+    margin-left:10px;
 }

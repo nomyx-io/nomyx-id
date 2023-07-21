@@ -9,6 +9,8 @@ import 'hardhat-deploy';
 import 'hardhat-deploy-ethers';
 import 'hardhat-deploy-tenderly';
 
+import '@nomicfoundation/hardhat-verify';
+
 import './tasks/claim-topics';
 import './tasks/identities';
 import './tasks/trusted-issuers';
@@ -71,6 +73,11 @@ const config: HardhatUserConfig = {
 			accounts: accounts('goerli'),
 		},
 	}),
+	etherscan: {
+		// Your API key for Etherscan
+		// Obtain one at https://etherscan.io/
+		apiKey: process.env.ETHERSCAN_API_KEY as string
+	},
 	paths: {
 		sources: 'src',
 	},
@@ -98,7 +105,7 @@ const config: HardhatUserConfig = {
 	tenderly: {
 		project: 'template-ethereum-contracts',
 		username: process.env.TENDERLY_USERNAME as string,
-	},
+	}
 };
 
 export default config;
