@@ -122,12 +122,9 @@ tr:hover {
     position: relative;
 }
 
-<<<<<<< HEAD
 .table-header .controls .search input{
     position: relative;
 }
-=======
->>>>>>> 85e4825 (LL-399: Central Authority Home)
 
 .table-header .controls .search::before {
     content: "";
@@ -146,11 +143,8 @@ tr:hover {
 .table-header .controls .search input[type="text"] {
     padding: 2px 15px 2px 28px;
     border-radius: 25px;
-<<<<<<< HEAD
-=======
     width: 100%;
     border: 1px solid #ddd;
->>>>>>> 85e4825 (LL-399: Central Authority Home)
 }
 
 .tabs{

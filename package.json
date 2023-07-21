@@ -64,10 +64,6 @@
         "tenderly:push": "node ./_scripts.js tenderly:push"
     },
     "dependencies": {
-<<<<<<< HEAD
-        "@material-ui/core": "^4.12.4",
-=======
->>>>>>> 85e4825 (LL-399: Central Authority Home)
         "react-paginate": "^8.2.0"
     }
 }
