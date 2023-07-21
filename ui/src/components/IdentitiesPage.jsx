@@ -46,7 +46,6 @@ const IdentitiesPage = ({ service }) => {
       ];
     
       const actions = [
-        // "view",
         {label:"Add Claim", name:"add", confirmation:"You are about to do something. Do you wish to proceed?"},
         {label:"View", name:"view", confirmation:"You are about to do something. Do you wish to proceed?"},
         {label:"Remove", name:"remove", confirmation:"You are about to do something. Do you wish to proceed?"}
@@ -70,25 +69,11 @@ const IdentitiesPage = ({ service }) => {
     
     
       const handleAction = async (action, object) => {
-        console.log(action, object);
-        //create a claim topic
-        // let claimTopicId = Math.round(Math.random()*10000000);
-        // let response = await blockchainService.addClaimTopic(claimTopicId);
-    
+        console.log(action, object);  
       }
 
     return (
 		<>
-			{/* Update the Button components to use tailwindcss classes */}
-			{/* <Button className="mb-4 bg-blue-500 text-white py-2 px-4 rounded" onClick={() => setIsAddDialogVisible(true)}>Add Identity</Button>
-            <Button className={`mb-4 py-2 px-4 rounded ${selectedIdentities.length === 0 ? 'bg-gray-200' : 'bg-red-500 text-white'}`} onClick={() => setIsRemoveDialogVisible(true)} disabled={selectedIdentities.length === 0}>Remove Identity</Button>
-            <AddIdentityDialog visible={isAddDialogVisible} onAddIdentity={handleAddIdentity} onCancel={() => setIsAddDialogVisible(false)} />
-            <RemoveIdentityDialog visible={isRemoveDialogVisible} onRemoveIdentity={handleRemoveIdentity} onCancel={() => setIsRemoveDialogVisible(false)} />
-            <IdentitiesList
-                identities={identities}
-                selectedIdentities={selectedIdentities}
-                onSelectedIdentitiesChange={(selected) => setSelectedIdentities(selected)}
-            /> */}
 			<ObjectList
 				title="Identities"
 				description="Identities represent individuals that can be related to Claim Topics"
