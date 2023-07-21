@@ -1,22 +1,15 @@
+import './ObjectList.css';
 
 import React, { useState, useEffect } from 'react';
 import ReactPaginate from 'react-paginate';
 
-import './ObjectList.css';
+export const ConfirmationDialog = ({ title, message, onConfirm, onCancel }) => {
 
-function pluralize(str) {
-    return str + "s";
-}
-function singularize(str) {
-    return str.substring(0, str.length - 1);
-}
-
-export const CreateObjectDialog = ({ title, onSave, onCancel }) => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
 
-    const handleSave = () => {
-        onSave({ name, description });
+    const handleConfirm = () => {
+        onConfirm({ name, description });
     }
 
     const handleCancel = () => {
@@ -24,23 +17,14 @@ export const CreateObjectDialog = ({ title, onSave, onCancel }) => {
     }
 
     return (
-        <div>
-            <h2>Create New {title}</h2>
-            <div className="form">
-                <div className="form-group">
-                    <label>Name</label>
-                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-                </div>
-                <div className="form-group">
-                    <label>Description</label>
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-                </div>
-                <div className="form-group">
-                    <button onClick={handleSave}>Save</button>
-                    <button onClick={handleCancel}>Cancel</button>
-                </div>
+        <>
+            <h1>Are you sure?</h1>
+            <p>{message}</p>
+            <div className="dialog-buttons">
+                <button className="btn cancel" onClick={handleCancel}>Cancel</button>
+                <button className="btn" onClick={handleConfirm}>Continue</button>
             </div>
-        </div>
+        </>
     )
 }
 
@@ -55,8 +39,20 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
     const [showDialog, setShowDialog] = useState(false);
     const [dialogContent, setDialogContent] = useState(null);
 
-    const handleAction = (action, object) => {
-        if (onAction) {
+
+    const handleAction = (action, confirm, object) => {
+        
+        if(confirm){
+            const handleConfirm = () => {
+                onAction(action, object);
+                setShowDialog(false);
+                setDialogContent(null);
+            };
+
+            setShowDialog(true);
+            setDialogContent(<ConfirmationDialog title={title} message={confirm} onConfirm={handleConfirm} onCancel={handleCancel} />);
+
+        }else if (onAction) {
             onAction(action, object);
         }
     }
@@ -69,9 +65,7 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
         setSearchText(text);
 
         let filteredData = data.filter(record => {
-            /*            return tabs ?
-                            record.tabs.includes(activeTab) && record.name.toLowerCase().includes(searchText.toLowerCase()) :
-                            record.name.toLowerCase().includes(searchText.toLowerCase());*/
+            //todo: implement tab filtering
 
             for (let prop in record) {
 
@@ -81,29 +75,16 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
                     return record;
                 }
             }
-
         });
 
         setFilteredData(filteredData);
-    }
-
-    const handleCreate = () => {
-        setShowDialog(true);
-        setDialogContent(<CreateObjectDialog title={title} onSave={handleSave} onCancel={handleCancel} />);
-    }
-
-    const handleSave = (object) => {
-        setShowDialog(false);
-        setDialogContent(null);
-        handleAction("create", object);
     }
 
     const handleCancel = () => {
         setShowDialog(false);
         setDialogContent(null);
     }
-
-    // Invoke when user click to request another page.
+    
     const handlePageClick = (event) => {
         const newOffset = (event.selected * pageSize) % data.length;
         console.log(
@@ -116,7 +97,7 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
         const endOffset = itemOffset + pageSize;
         setPageData(filteredData.slice(itemOffset, endOffset));
         setPageCount(Math.ceil(filteredData.length / pageSize));
-    }, [itemOffset, pageSize, filteredData]);
+    }, [itemOffset, pageSize, filteredData, showDialog]);
 
     return (
         <div className="container">
@@ -132,12 +113,8 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
             )}
 
             <header className="table-header">
-
-
                 <h1>{title}</h1>
-
                 <h2>{description ? description : 'A list of your ' + title}</h2>
-
                 <section className="controls">
 
                     {search && <div className="search">
@@ -148,17 +125,14 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
                         <div className="global-actions">
                             {globalActions.map(globalAction => {
                                 return (
-                                    <button key={globalAction} className={"btn global-action-" + globalAction} onClick={() => handleAction(globalAction)}>{globalAction}</button>
+                                    <button key={globalAction.name} className={"btn global-action-" + globalAction.name} onClick={() => handleAction(globalAction.name, globalAction.confirmation)}>{globalAction.label}</button>
                                 )
                             })}
                         </div>
                     )}
 
                 </section>
-
             </header>
-
-
 
             <table>
                 <thead>
@@ -194,12 +168,9 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
                                     )
                                 })}
                                 <td key={"actions" + record.id}>
-                                    {/*{actions.includes("edit") && <a href="#" onClick={() => handleAction("edit", record)}>Edit</a>}
-                                    {actions.includes("delete") && <a href="#" onClick={() => handleAction("delete", record)}>Delete</a>}*/}
-
                                     {actions.map(action => {
                                         return (
-                                            <a key={record.id + "-action-" + action} href="#" onClick={() => handleAction(action, record)}>{action}</a>
+                                            <a key={record.id + "-action-" + action.name} href="#" onClick={() => handleAction(action.name, action.confirmation, record)}>{action.label}</a>
                                         )
                                     })}
                                 </td>
@@ -208,6 +179,10 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
                     })}
                 </tbody>
             </table>
+
+            {pageData.length == 0 && <div className="empty">
+                <p>No {title} found.</p>
+            </div>}
 
             <div className="pagination">
                 <ReactPaginate
@@ -220,6 +195,7 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
                     renderOnZeroPageCount={null}
                 />
             </div>
+
             {showDialog && <div className="dialog">
                 <div className="dialog-content">
                     {dialogContent}
