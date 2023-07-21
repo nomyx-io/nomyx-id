@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Checkbox, Modal, Input } from 'antd';
 
+
 import ObjectList from './ObjectList';
+import blockchainService from "../services/BlockchainService";
 
 const ClaimTopicsPage = ({ service }) => {
 
@@ -65,6 +67,7 @@ const ClaimTopicsPage = ({ service }) => {
       globalActions={globalActions}
       search={search}
       data={data}
+      pageSize={10}
       onAction={handleAction}
       onGlobalAction={handleAction}
     />);
