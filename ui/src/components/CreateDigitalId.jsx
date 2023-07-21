@@ -7,7 +7,7 @@ function CreateDigitalId() {
     const [accountNumber, setAccountNumber] = React.useState('')
     return (
         <div >
-            <p className='text-xl p-6'>Create Identity</p>
+            <p className='text-xl p-6'>Create Digital Id</p>
             <hr></hr>
             <div className='p-6 mt-2'>
                 <div>
@@ -18,7 +18,7 @@ function CreateDigitalId() {
                     </div>
                     <p>User-friendly name that describes the trusted issuers.Shown to end-users</p>
                 </div>
-                <div className='mt-10 mb-6 w-[75%] border p-6 rounded-lg'>
+                <div className='mt-10 mb-6 w-[75%] max-[600px]:w-full border p-6 rounded-lg'>
                     <div>
                         <p>Investor Wallet Address</p>
                         <div className='mt-2 relative w-full flex border rounded-lg'>
@@ -33,7 +33,7 @@ function CreateDigitalId() {
                     </div>
                 </div>
                 <div className='flex justify-end max-[600px]:justify-center'>
-                    <Button className='max-[600px]:w-[60%] min-w-max text-center font-semibold rounded h-11 bg-[#7F56D9] text-white'>Create Identity</Button>
+                    <Button className='max-[600px]:w-[60%] min-w-max text-center font-semibold rounded h-11 bg-[#7F56D9] text-white'>Create Digital Id</Button>
                 </div>
             </div>
         </div>
