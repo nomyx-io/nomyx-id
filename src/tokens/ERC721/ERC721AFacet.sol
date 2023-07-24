@@ -202,7 +202,7 @@ contract ERC721AFacet is Context, Initializable, Modifiers {
         address from,
         address to,
         uint256 tokenId
-    ) private {
+    ) internal {
         ERC721ALib.erc721aStorage().erc721Contract._transfer(msg.sender, from, to, tokenId);
     }
 
@@ -229,7 +229,7 @@ contract ERC721AFacet is Context, Initializable, Modifiers {
         address to,
         uint256 tokenId,
         address owner
-    ) private {
+    ) internal {
         ERC721ALib.erc721aStorage().erc721Contract._tokenApprovals[tokenId] = to;
         emit Approval(owner, to, tokenId);
     }
@@ -249,7 +249,7 @@ contract ERC721AFacet is Context, Initializable, Modifiers {
         address to,
         uint256 tokenId,
         bytes memory _data
-    ) private returns (bool) {
+    ) internal returns (bool) {
         return ERC721ALib._checkOnERC721Received(msg.sender, from, to, tokenId, _data);
     }
 }

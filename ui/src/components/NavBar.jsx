@@ -17,12 +17,14 @@ const NavBar = ({
           <ul className="space-y-2 mt-2">
             <li><Link to="/topics/add" className="hover:underline">Add new...</Link></li>
             <li><Link to="/topics" className="hover:underline">List</Link></li>
+            <li><Link to="/topics/create" className="hover:underline">Create</Link></li>
+
           </ul>
         </li>
         <li className="hover:underline">
           <Link to="/claims">Claims</Link>
           <ul className="space-y-2 mt-2">
-            <li><Link to="/claims/add" className="hover:underline">Add new...</Link></li>
+            <li><Link to="/claims/edit" className="hover:underline">Add new...</Link></li>
             <li><Link to="/claims" className="hover:underline">List</Link></li>
           </ul>
         </li>
@@ -31,6 +33,7 @@ const NavBar = ({
           <ul className="space-y-2 mt-2">
             <li><Link to="/identities/add" className="hover:underline">Add new...</Link></li>
             <li><Link to="/identities" className="hover:underline">List</Link></li>
+            <li><Link to="/identities/create" className="hover:underline">Create Digital Id</Link></li>
           </ul>
         </li>
         <li className="hover:underline">
