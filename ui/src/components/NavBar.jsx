@@ -17,6 +17,8 @@ const NavBar = ({
           <ul className="space-y-2 mt-2">
             <li><Link to="/topics/add" className="hover:underline">Add new...</Link></li>
             <li><Link to="/topics" className="hover:underline">List</Link></li>
+            <li><Link to="/topics/create" className="hover:underline">Create</Link></li>
+
           </ul>
         </li>
         <li className="hover:underline">
@@ -31,7 +33,8 @@ const NavBar = ({
           <ul className="space-y-2 mt-2">
             <li><Link to="/identities/add" className="hover:underline">Add new...</Link></li>
             <li><Link to="/identities" className="hover:underline">List</Link></li>
-            <li><Link to="/identities/id" className="hover:underline">Detail Page</Link></li>
+            <li><Link to="/identities/{selectedId}" className="hover:underline">Detail Page</Link></li>
+            <li><Link to="/identities/create" className="hover:underline">Create Digital Id</Link></li>
           </ul>
         </li>
         <li className="hover:underline">

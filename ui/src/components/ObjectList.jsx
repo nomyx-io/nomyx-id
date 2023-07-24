@@ -1,21 +1,15 @@
-
-import React, { useState } from 'react';
-
 import './ObjectList.css';
 
-function pluralize(str) {
-    return str + "s";
-}
-function singularize(str) {
-    return str.substring(0, str.length - 1);
-}
+import React, { useState, useEffect } from 'react';
+import ReactPaginate from 'react-paginate';
 
-export const CreateObjectDialog = ({ title, onSave, onCancel }) => {
+export const ConfirmationDialog = ({ title, message, onConfirm, onCancel }) => {
+
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
 
-    const handleSave = () => {
-        onSave({ name, description });
+    const handleConfirm = () => {
+        onConfirm({ name, description });
     }
 
     const handleCancel = () => {
@@ -23,34 +17,42 @@ export const CreateObjectDialog = ({ title, onSave, onCancel }) => {
     }
 
     return (
-        <div>
-            <h2>Create New {title}</h2>
-            <div className="form">
-                <div className="form-group">
-                    <label>Name</label>
-                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-                </div>
-                <div className="form-group">
-                    <label>Description</label>
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-                </div>
-                <div className="form-group">
-                    <button onClick={handleSave}>Save</button>
-                    <button onClick={handleCancel}>Cancel</button>
-                </div>
+        <>
+            <h1>Are you sure?</h1>
+            <p>{message}</p>
+            <div className="dialog-buttons">
+                <button className="btn cancel" onClick={handleCancel}>Cancel</button>
+                <button className="btn" onClick={handleConfirm}>Continue</button>
             </div>
-        </div>
+        </>
     )
 }
 
-const ObjectList = ({ title, tabs, columns, actions, globalActions, search, children, onAction }) => {
-    const [activeTab, setActiveTab] = useState(tabs[0].id);
+const ObjectList = ({ title, description, tabs, columns, actions, globalActions, search, data, pageSize, onAction }) => {
+
+    const [pageData, setPageData] = useState([]);
+    const [filteredData, setFilteredData] = useState(data);
+    const [pageCount, setPageCount] = useState(0);
+    const [itemOffset, setItemOffset] = useState(0);
+    const [activeTab, setActiveTab] = useState(tabs ? tabs[0].id : null);
     const [searchText, setSearchText] = useState("");
     const [showDialog, setShowDialog] = useState(false);
     const [dialogContent, setDialogContent] = useState(null);
 
-    const handleAction = (action, object) => {
-        if (onAction) {
+
+    const handleAction = (action, confirm, object) => {
+        
+        if(confirm){
+            const handleConfirm = () => {
+                onAction(action, object);
+                setShowDialog(false);
+                setDialogContent(null);
+            };
+
+            setShowDialog(true);
+            setDialogContent(<ConfirmationDialog title={title} message={confirm} onConfirm={handleConfirm} onCancel={handleCancel} />);
+
+        }else if (onAction) {
             onAction(action, object);
         }
     }
@@ -61,84 +63,139 @@ const ObjectList = ({ title, tabs, columns, actions, globalActions, search, chil
 
     const handleSearch = (text) => {
         setSearchText(text);
-    }
 
-    const handleCreate = () => {
-        setShowDialog(true);
-        setDialogContent(<CreateObjectDialog title={title} onSave={handleSave} onCancel={handleCancel} />);
-    }
+        let filteredData = data.filter(record => {
+            //todo: implement tab filtering
 
-    const handleSave = (object) => {
-        setShowDialog(false);
-        setDialogContent(null);
-        handleAction("create", object);
+            for (let prop in record) {
+
+                if(typeof record[prop] == 'string' && record[prop].includes(text)){
+                    return record;
+                }else if(record[prop] == text){
+                    return record;
+                }
+            }
+        });
+
+        setFilteredData(filteredData);
     }
 
     const handleCancel = () => {
         setShowDialog(false);
         setDialogContent(null);
     }
+    
+    const handlePageClick = (event) => {
+        const newOffset = (event.selected * pageSize) % data.length;
+        console.log(
+            `User requested page number ${event.selected}, which is offset ${newOffset}`
+        );
+        setItemOffset(newOffset);
+    };
 
-    const filteredChildren = children.filter(child => {
-        return child.tabs.includes(activeTab) && child.name.toLowerCase().includes(searchText.toLowerCase());
-    });
+    useEffect(() => {
+        const endOffset = itemOffset + pageSize;
+        setPageData(filteredData.slice(itemOffset, endOffset));
+        setPageCount(Math.ceil(filteredData.length / pageSize));
+    }, [itemOffset, pageSize, filteredData, showDialog]);
 
     return (
         <div className="container">
-            <div className="row">
+
+            {tabs && (
+                <div className="tabs">
+                    {tabs.map(tab => {
+                        return (
+                            <a key={tab.id} href="#" className={tab.id === activeTab ? "active" : ""} onClick={() => handleTabClick(tab)}>{tab.name}</a>
+                        )
+                    })}
+                </div>
+            )}
+
+            <header className="table-header">
                 <h1>{title}</h1>
-                {// eslint-disable-next-line
-                }
-                {globalActions.includes("create") && <a href="#" className="btn" onClick={handleCreate}>Create New {singularize(title)}</a>}
-            </div>
-            <h2>A list of your {title}</h2>
-            <div className="tabs">
-                {tabs.map(tab => {
-                    return (
-                        <a key={tab.id} href="#" className={tab.id === activeTab ? "active" : ""} onClick={() => handleTabClick(tab)}>{tab.name}</a>
-                    )
-                })}
-            </div>
-            {search && <div className="search">
-                <input type="text" placeholder="Search..." onChange={(e) => handleSearch(e.target.value)} />
-                <button>Search</button>
-            </div>}
+                <h2>{description ? description : 'A list of your ' + title}</h2>
+                <section className="controls">
+
+                    {search && <div className="search">
+                        <input type="text" placeholder="Search..." onKeyUp={(e) => handleSearch(e.target.value)} />
+                    </div>}
+
+                    {globalActions && (
+                        <div className="global-actions">
+                            {globalActions.map(globalAction => {
+                                return (
+                                    <button key={globalAction.name} className={"btn global-action-" + globalAction.name} onClick={() => handleAction(globalAction.name, globalAction.confirmation)}>{globalAction.label}</button>
+                                )
+                            })}
+                        </div>
+                    )}
+
+                </section>
+            </header>
+
             <table>
                 <thead>
                     <tr>
                         {columns.map(column => {
+
+                            let fieldName = column;
+                            let label = column;
+                            let style = {};
+
+                            if(typeof column === "object"){
+                                fieldName = column.name;
+                                label = column.label;
+                                style = column.width ? {width: column.width} : {};
+                            }
+
                             return (
-                                <th key={column}>{column}</th>
+                                <th key={fieldName} style={style}>{label}</th>
                             )
                         })}
-                        <th>Actions</th>
+                        <th key={title + "-actions"}>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredChildren.map(child => {
+                    {pageData.map(record => {
                         return (
-                            <tr key={child.name}>
+                            <tr key={record.id}>
                                 {columns.map(column => {
+                                    let fieldName = typeof column === "object" ? column.name : column;
+                                    let key = fieldName + '-' + record.id;
                                     return (
-                                        <td key={column}>{child[column]}</td>
+                                        <td key={key}>{record[fieldName]}</td>
                                     )
                                 })}
-                                <td>
-                                    {actions.includes("edit") && <a href="#" onClick={() => handleAction("edit", child)}>Edit</a>}
-                                    {actions.includes("delete") && <a href="#" onClick={() => handleAction("delete", child)}>Delete</a>}
+                                <td key={"actions" + record.id}>
+                                    {actions.map(action => {
+                                        return (
+                                            <a key={record.id + "-action-" + action.name} href="#" onClick={() => handleAction(action.name, action.confirmation, record)}>{action.label}</a>
+                                        )
+                                    })}
                                 </td>
                             </tr>
                         )
                     })}
                 </tbody>
             </table>
+
+            {pageData.length == 0 && <div className="empty">
+                <p>No {title} found.</p>
+            </div>}
+
             <div className="pagination">
-                <a href="#">Previous</a>
-                <a href="#">1</a>
-                <a href="#" className="active">2</a>
-                <a href="#">3</a>
-                <a href="#">Next</a>
+                <ReactPaginate
+                    breakLabel="&#8230;"
+                    previousLabel="&#9664;"
+                    nextLabel="&#9658;"
+                    onPageChange={handlePageClick}
+                    pageRangeDisplayed={5}
+                    pageCount={pageCount}
+                    renderOnZeroPageCount={null}
+                />
             </div>
+
             {showDialog && <div className="dialog">
                 <div className="dialog-content">
                     {dialogContent}
