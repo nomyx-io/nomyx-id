@@ -4,20 +4,21 @@ import React from 'react'
 function DigitalIdentityDetailView() {
     const [displayName, setDisplayName] = React.useState('')
 
-    const firstCardData = [
-        { name: "Claim name", value: "Base KYC", icon: false },
-        { name: "Claim expiration date", value: "30/07/2023", icon: false },
-        { name: "Issue date", value: "09/07/2023", icon: false },
-        { name: "Claim hash", value: "880bf326b5f662ba480ff48dc514631e", icon: true },
-        { name: "Txn hash", value: "0x5A55456454688474656454DDBVS", icon: true }
-    ]
-
-    const secondCardData = [
-        { name: "Claim name", value: "Accredited Investor", icon: false },
-        { name: "Claim expiration date", value: "30/07/2023", icon: false },
-        { name: "Issue date", value: "09/07/2023", icon: false },
-        { name: "Claim hash", value: "980bf326b5f662ba480ff48dc661188", icon: true },
-        { name: "Txn hash", value: "0x6A55456454688474656454DDRTQQA", icon: true }
+    const CardData = [
+        {
+            claim_name: "Base KYC",
+            claim_expiration_date: "30/07/2023",
+            issue_date: "09/07/2023",
+            claim_hash: "880bf326b5f662ba480ff48dc514631e",
+            txn_hash: "0x5A55456454688474656454DDBVS"
+        },
+        {
+            claim_name: "Accredited Investor",
+            claim_expiration_date: "30/07/2023",
+            issue_date: "09/07/2023",
+            claim_hash: "980bf326b5f662ba480ff48dc661188",
+            txn_hash: "0x6A55456454688474656454DDRTQQA"
+        }
     ]
 
     return (
@@ -39,8 +40,11 @@ function DigitalIdentityDetailView() {
                     <p className='font-light text-4xl max-[500px]:text-base text-gray-300'>007</p>
                 </div>
                 <p>Active Claims</p>
-                <ClaimCard data={firstCardData} />
-                <ClaimCard data={secondCardData} />
+                {CardData.map((item) => {
+                    return (
+                        <ClaimCard data={item} />
+                    )
+                })}
             </div>
             <div className='flex justify-end max-[500px]:justify-center'>
                 <Button className='max-[500px]:w-[50%] rounded-none my-6 mr-6 h-11 px-10 bg-[#9952b3] text-white'>Back</Button>
@@ -52,17 +56,38 @@ function DigitalIdentityDetailView() {
 export const ClaimCard = ({ data }) => {
     return (
         <div className='max-[500px]:px-0 border rounded-xl p-6 bg-[#b39dd4] flex flex-col gap-3'>
-            {data.map((item) => {
-                return (
-                    <div className='flex justify-between max-[500px]:flex-col text-center'>
-                        <p className='max-[500px]:text-sm'>{item.name}</p>
-                        <div className='flex gap-2 justify-center'>
-                            <p className='max-[500px]:text-xs'>{item.value}</p>
-                            {item.icon && <img src={require("../images/copy-icon.png")} alt=""></img>}
-                        </div>
-                    </div>
-                )
-            })}
+            <div className='flex justify-between max-[500px]:flex-col text-center'>
+                <p className='max-[500px]:text-sm'>Claim Name</p>
+                <div className='flex gap-2 justify-center'>
+                    <p className='max-[500px]:text-xs'>{data.claim_name}</p>
+                </div>
+            </div>
+            <div className='flex justify-between max-[500px]:flex-col text-center'>
+                <p className='max-[500px]:text-sm'>Claim expiration date</p>
+                <div className='flex gap-2 justify-center'>
+                    <p className='max-[500px]:text-xs'>{data.claim_expiration_date}</p>
+                </div>
+            </div>
+            <div className='flex justify-between max-[500px]:flex-col text-center'>
+                <p className='max-[500px]:text-sm'>Issue date</p>
+                <div className='flex gap-2 justify-center'>
+                    <p className='max-[500px]:text-xs'>{data.issue_date}</p>
+                </div>
+            </div>
+            <div className='flex justify-between max-[500px]:flex-col text-center'>
+                <p className='max-[500px]:text-sm'>Claim hash</p>
+                <div className='flex gap-2 justify-center'>
+                    <p className='max-[500px]:text-xs'>{data.claim_hash}</p>
+                    <img src={require("../images/copy-icon.png")} alt=""></img>
+                </div>
+            </div>
+            <div className='flex justify-between max-[500px]:flex-col text-center'>
+                <p className='max-[500px]:text-sm'>Txn hash</p>
+                <div className='flex gap-2 justify-center'>
+                    <p className='max-[500px]:text-xs'>{data.txn_hash}</p>
+                    <img src={require("../images/copy-icon.png")} alt=""></img>
+                </div>
+            </div>
         </div>
     )
 }

@@ -143,8 +143,8 @@ function App() {
 							<Route path="/claims" element={<ClaimsPage service={blockchainService} />} />
 							<Route path="/login" element={<Login />} />
 							<Route path="/identities/create" element={<CreateDigitalId />} />
-              <Route path="/topics/create" element={<CreateClaimTopic />} />
-              <Route path="/identities/{selectedId}" element={<DigitalIdentityDetailView />} />
+              				<Route path="/topics/create" element={<CreateClaimTopic />} />
+              				<Route path="/identities/{selectedId}" element={<DigitalIdentityDetailView />} />
 						</Routes>
 					</div>
 		</Router>
