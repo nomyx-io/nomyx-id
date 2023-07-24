@@ -45,9 +45,16 @@ function CreateTrustedIssuer() {
                     </div>
                     <p>Manage Claim Topic IDs</p>
                 </div>
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center my-5">
                     <div>
-                        <div>Available Claims</div>
+                        <div className='flex gap-28'>
+                            <p>
+                                Available Claims
+                            </p>
+                            <p>
+                                Selected Claims
+                            </p>
+                        </div>
                         <Transfer
                             showSelectAll={false}
                             dataSource={mockData}
@@ -57,6 +64,7 @@ function CreateTrustedIssuer() {
                             onChange={onChange}
                             onSelectChange={onSelectChange}
                             render={(item) => item.title}
+                        // style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
                         />
                     </div>
                 </div>
