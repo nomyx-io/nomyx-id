@@ -132,7 +132,7 @@ function App() {
           <Route path="/issuers" element={<TrustedIssuersPage service={blockchainService} />} />
           <Route path="/identities" element={<IdentitiesPage service={blockchainService} />} />
           <Route path="/claims" element={<ClaimsPage service={blockchainService} />} />
-          <Route path="/claims/create" element={<EditClaim service={blockchainService} />} />
+          <Route path="/claims/edit" element={<EditClaim service={blockchainService} />} />
         </Routes>
       </div>
     </Router>
