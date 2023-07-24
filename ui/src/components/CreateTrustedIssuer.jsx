@@ -64,7 +64,6 @@ function CreateTrustedIssuer() {
                             onChange={onChange}
                             onSelectChange={onSelectChange}
                             render={(item) => item.title}
-                        // style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
                         />
                     </div>
                 </div>
