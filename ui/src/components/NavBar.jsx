@@ -17,6 +17,8 @@ const NavBar = ({
           <ul className="space-y-2 mt-2">
             <li><Link to="/topics/add" className="hover:underline">Add new...</Link></li>
             <li><Link to="/topics" className="hover:underline">List</Link></li>
+            <li><Link to="/topics/create" className="hover:underline">Create</Link></li>
+
           </ul>
         </li>
         <li className="hover:underline">
