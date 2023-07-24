@@ -15,6 +15,7 @@ import IdentitiesPage from './components/IdentitiesPage.jsx';
 import ClaimsPage from './components/ClaimsPage.jsx';
 
 import BlockchainService from './services/BlockchainService.js';
+import CreateDigitalId from './components/CreateDigitalId.jsx';
 import Login from './components/LoginPage.jsx';
 
 function UnsupportedNetworkDialog(props: any) {
@@ -131,7 +132,7 @@ function App() {
 							}}
 						/>
 					</div>
-					<div className={`${loggedIn ? "p-0 -ml-4 -mt-[10px] overflow-hidden" : "content"}`}>
+					<div className={`${loggedIn ? "p-0 -ml-4 overflow-hidden" : "content"}`}>
 						<Routes>
 							<Route path="/" element={<Home />} />
 							<Route path="/topics" element={<ClaimTopicsPage service={blockchainService} />} />
@@ -139,6 +140,7 @@ function App() {
 							<Route path="/identities" element={<IdentitiesPage service={blockchainService} />} />
 							<Route path="/claims" element={<ClaimsPage service={blockchainService} />} />
 							<Route path="/login" element={<Login />} />
+							<Route path="/identities/create" element={<CreateDigitalId />} />
 						</Routes>
 					</div>
 		</Router>
