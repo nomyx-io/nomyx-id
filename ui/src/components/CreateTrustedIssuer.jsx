@@ -43,7 +43,7 @@ function CreateTrustedIssuer() {
                         <Input value={walletAddress} className='border w-full p-2 rounded-lg text-xl' placeholder='Wallet Address' type='text' maxLength={32} onChange={(e) => setWalletAddress(e.target.value)} />
                         <p className='absolute right-5 top-2'>{walletAddress.length}/32</p>
                     </div>
-                    <p>Manage Claim Topic IDs</p>
+                    <p className='my-4'>Manage Claim Topic IDs</p>
                 </div>
                 <div className="flex flex-col items-center my-5">
                     <div>
