@@ -19,6 +19,7 @@ import CreateClaimTopic from './components/CreateClaimTopic.jsx';
 import BlockchainService from './services/BlockchainService.js';
 import CreateDigitalId from './components/CreateDigitalId.jsx';
 import Login from './components/LoginPage.jsx';
+import EditClaim  from './components/EditClaim.jsx';
 
 function UnsupportedNetworkDialog(props: any) {
 
@@ -141,14 +142,15 @@ function App() {
 							<Route path="/issuers" element={<TrustedIssuersPage service={blockchainService} />} />
 							<Route path="/identities" element={<IdentitiesPage service={blockchainService} />} />
 							<Route path="/claims" element={<ClaimsPage service={blockchainService} />} />
+              <Route path="/claims/edit" element={<EditClaim service={blockchainService} />} />
 							<Route path="/login" element={<Login />} />
 							<Route path="/identities/create" element={<CreateDigitalId />} />
               				<Route path="/topics/create" element={<CreateClaimTopic />} />
               				<Route path="/identities/{selectedId}" element={<DigitalIdentityDetailView />} />
 						</Routes>
 					</div>
-		</Router>
-		)
-						}
+    </Router>
+  );
+}
 
 export default App;
