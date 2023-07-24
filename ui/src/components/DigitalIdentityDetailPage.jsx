@@ -39,8 +39,8 @@ function DigitalIdentityDetailView() {
                     <p className='font-light text-4xl max-[500px]:text-base text-gray-300'>007</p>
                 </div>
                 <p>Active Claims</p>
-                <VioletCard data={firstCardData} />
-                <VioletCard data={secondCardData} />
+                <ClaimCard data={firstCardData} />
+                <ClaimCard data={secondCardData} />
             </div>
             <div className='flex justify-end max-[500px]:justify-center'>
                 <Button className='max-[500px]:w-[50%] rounded-none my-6 mr-6 h-11 px-10 bg-[#9952b3] text-white'>Back</Button>
@@ -49,7 +49,7 @@ function DigitalIdentityDetailView() {
     )
 }
 
-export const VioletCard = ({ data }) => {
+export const ClaimCard = ({ data }) => {
     return (
         <div className='max-[500px]:px-0 border rounded-xl p-6 bg-[#b39dd4] flex flex-col gap-3'>
             {data.map((item) => {
