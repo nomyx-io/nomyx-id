@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Checkbox, Modal, Input } from 'antd';
 
 
 import ObjectList from './ObjectList';
 
 const ClaimTopicsPage = ({ service }) => {
-
-  const [claimTopics, setClaimTopics] = useState([]);
 
   const columns = [
     {label:"Id", name:"id"},
@@ -22,9 +19,15 @@ const ClaimTopicsPage = ({ service }) => {
     {label:"Create Claim Topic", name:"create"}
   ];
 
+  const [claimTopics, setClaimTopics] = useState([]);
+
   useEffect( () => {
+
+    console.log('ClaimTopicsPage.useEffect');
     async function getClaimTopics() {
       const result = await service.getClaimTopics();
+      console.log('result');
+      console.log(result);
       setClaimTopics(result);
     }
 

@@ -4,18 +4,33 @@ import * as ClaimTopicsRegistry from "../abi/IClaimTopicsRegistry.json";
 import * as IdentityRegistry from "../abi/IIdentityRegistry.json";
 import * as TrustedIssuersRegistry from '../abi/ITrustedIssuersRegistry.json';
 
+const Parse = require("parse/node");
+
 class BlockchainService {
-    claimTopicsAbi = ClaimTopicsRegistry;
-    identityRegistryAbi = IdentityRegistry;
-    trustedIssuersRegistryAbi = TrustedIssuersRegistry;
+    claimTopicsAbi = ClaimTopicsRegistry.default.abi;
+    identityRegistryAbi = IdentityRegistry.default.abi;
+    trustedIssuersRegistryAbi = TrustedIssuersRegistry.default.abi;
 
     constructor(provider, contractAddress) {
-        this.provider = new ethers.providers.JsonRpcProvider(provider);
+
+        console.log("provider:");
+        console.log(provider);
+
+        console.log("contractAddress:");
+        console.log(contractAddress);
+
+        // this.provider = new ethers.providers.JsonRpcProvider(provider);
+        this.provider = provider;
         this.signer = this.provider.getSigner();
 
         this.claimTopicRegistryService = new ethers.Contract(contractAddress, this.claimTopicsAbi, this.provider);
         this.identityRegistryService = new ethers.Contract(contractAddress, this.identityRegistryAbi, this.provider);
         this.trustedIssuersRegistryService = new ethers.Contract(contractAddress, this.trustedIssuersRegistryAbi, this.provider);
+
+        //connect to parse server
+        Parse.initialize("gemForce", "gemForce", "gemForceMasterKey");
+        Parse.serverURL = "http://direct.bitcog.co:1337/parse";
+        Parse.masterKey = "gemForceMasterKey";
 
         // Claim Topics Registry
         this.addClaimTopic = this.addClaimTopic.bind(this);
@@ -158,6 +173,7 @@ class BlockchainService {
 
     // Getter
     async getClaimTopics() {
+
         return await this.claimTopicRegistryService.getClaimTopics();
     }
 

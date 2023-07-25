@@ -62,8 +62,5 @@
         "fork:node": "node ./_scripts.js fork:node",
         "fork:test": "node ./_scripts.js fork:test",
         "tenderly:push": "node ./_scripts.js tenderly:push"
-    },
-    "dependencies": {
-        "react-paginate": "^8.2.0"
     }
 }
