@@ -143,6 +143,8 @@ tr:hover {
 .table-header .controls .search input[type="text"] {
     padding: 2px 15px 2px 28px;
     border-radius: 25px;
+    width: 100%;
+    border: 1px solid #ddd;
 }
 
 .tabs{
