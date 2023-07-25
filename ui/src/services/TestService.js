@@ -1,6 +1,4 @@
-import BlockchainService from "./BlockchainService";
-
-let getTestData = ()=>{
+const getTestData = ()=>{
     const testData = [];
 
     for(let i=1; i<=200; i++){
