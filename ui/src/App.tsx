@@ -19,6 +19,7 @@ import BlockchainService from './services/BlockchainService.js';
 import CreateDigitalId from './components/CreateDigitalId.jsx';
 import Login from './components/LoginPage.jsx';
 import EditClaim  from './components/EditClaim.jsx';
+import TestService from "./services/TestService";
 
 function UnsupportedNetworkDialog(props: any) {
 
@@ -71,7 +72,7 @@ function App() {
 
   const [isConnected, setIsConnected] = React.useState(false);
   const [currentNetwork, setCurrentNetwork] = React.useState(0);
-  const [blockchainService, setBlockchainService] = React.useState({});
+  const [blockchainService, setBlockchainService] = React.useState(new TestService());
   const [unsupportedNetworkDialogVisible, setUnsupportedNetworkDialogVisible] = React.useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
 

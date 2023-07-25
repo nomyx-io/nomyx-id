@@ -3,11 +3,10 @@ import { Button, Checkbox, Modal, Input } from 'antd';
 
 
 import ObjectList from './ObjectList';
-import blockchainService from "../services/BlockchainService";
 
 const ClaimTopicsPage = ({ service }) => {
 
-  const [claimTopics, setClaimTopics] = useState([])
+  const [claimTopics, setClaimTopics] = useState([]);
 
   const columns = [
     {label:"Id", name:"id"},
@@ -23,33 +22,18 @@ const ClaimTopicsPage = ({ service }) => {
     {label:"Create Claim Topic", name:"create"}
   ];
 
-  // useEffect(() => {
-  //   service.getClaimTopics().then((claimTopics) => {
-  //     setClaimTopics(claimTopics.map((claimTopic) => {
-  //       return {
-  //         name: claimTopic.name,
-  //         description: claimTopic.description,
-  //         status: claimTopic.status,
-  //         tabs: ["all", claimTopic.status],
-  //       }
-  //     }))
-  //   })
-  // }, [service])
+  useEffect( () => {
+    async function getClaimTopics() {
+      const result = await service.getClaimTopics();
+      setClaimTopics(result);
+    }
+
+    getClaimTopics();
+
+  }, [service]);
 
   const search = true;
-
-  const data = [];
-
-  for(let i=1; i<=200; i++){
-    data.push({
-      id: i,
-      name: "Object " + i,
-      description: "This is object " + i,
-      status: "active"
-    });
-  };
-
-
+  
   const handleAction = async (action, object) => {
     console.log(action, object);
     //create a claim topic
@@ -59,18 +43,19 @@ const ClaimTopicsPage = ({ service }) => {
   }
 
   return (
-    <ObjectList
-      title="Claim Topics"
-      description="Claim Topics describe the types of Claims that can be created for any Identity"
-      columns={columns}
-      actions={actions}
-      globalActions={globalActions}
-      search={search}
-      data={data}
-      pageSize={10}
-      onAction={handleAction}
-      onGlobalAction={handleAction}
-    />);
+      <ObjectList
+          title="Claim Topics"
+          description="Claim Topics describe the types of Claims that can be created for any Identity"
+          columns={columns}
+          actions={actions}
+          globalActions={globalActions}
+          search={search}
+          data={claimTopics}
+          pageSize={10}
+          onAction={handleAction}
+          onGlobalAction={handleAction}
+      />
+    );
 
 };
 
