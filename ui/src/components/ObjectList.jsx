@@ -8,12 +8,12 @@ export const ConfirmationDialog = ({ title, message, onConfirm, onCancel }) => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
 
-    const handleConfirm = () => {
-        onConfirm({ name, description });
+    const handleConfirm = (event) => {
+        onConfirm({event, name, description });
     }
 
-    const handleCancel = () => {
-        onCancel();
+    const handleCancel = (event) => {
+        onCancel(event);
     }
 
     return (
@@ -21,8 +21,8 @@ export const ConfirmationDialog = ({ title, message, onConfirm, onCancel }) => {
             <h1>Are you sure?</h1>
             <p>{message}</p>
             <div className="dialog-buttons">
-                <button className="btn cancel" onClick={handleCancel}>Cancel</button>
-                <button className="btn" onClick={handleConfirm}>Continue</button>
+                <button className="btn cancel" onClick={(event) => handleCancel(event)}>Cancel</button>
+                <button className="btn" onClick={(event) => handleConfirm(event)}>Continue</button>
             </div>
         </>
     )
@@ -60,20 +60,22 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
         return value;
     };
 
-    const handleAction = (action, confirm, object) => {
-        
+    const handleAction = (event, action, confirm, object) => {
+
+        event.preventDefault();
+
         if(confirm){
-            const handleConfirm = () => {
-                onAction(action, object);
+            const handleConfirm = (event) => {
+                onAction(event, action, object);
                 setShowDialog(false);
                 setDialogContent(null);
             };
 
             setShowDialog(true);
-            setDialogContent(<ConfirmationDialog title={title} message={confirm} onConfirm={handleConfirm} onCancel={handleCancel} />);
+            setDialogContent(<ConfirmationDialog title={title} message={confirm} onConfirm={(event)=>handleConfirm(event)} onCancel={(event)=>handleCancel(event)} />);
 
         }else if (onAction) {
-            onAction(action, object);
+            onAction(event, action, object);
         }
     }
 
@@ -123,7 +125,6 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
         setPageCount(Math.ceil(filteredData.length / pageSize));
     }, [itemOffset, pageSize, showDialog, data, filteredData]);
 
-
     return (
         <div className="container">
 
@@ -150,7 +151,7 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
                         <div className="global-actions">
                             {globalActions.map(globalAction => {
                                 return (
-                                    <button key={globalAction.name} className={"btn global-action-" + globalAction.name} onClick={() => handleAction(globalAction.name, globalAction.confirmation)}>{globalAction.label}</button>
+                                    <button key={globalAction.name} className={"btn global-action-" + globalAction.name} onClick={(event) => handleAction(event, globalAction.name, globalAction.confirmation)}>{globalAction.label}</button>
                                 )
                             })}
                         </div>
@@ -195,7 +196,7 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
                                 <td key={"actions" + record.id}>
                                     {actions.map(action => {
                                         return (
-                                            <a key={record.id + "-action-" + action.name} href="#" onClick={() => handleAction(action.name, action.confirmation, record)}>{action.label}</a>
+                                            <a key={record.id + "-action-" + action.name} href="#" onClick={(event, ) => handleAction(event, action.name, action.confirmation, record)}>{action.label}</a>
                                         )
                                     })}
                                 </td>
