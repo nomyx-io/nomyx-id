@@ -119,7 +119,7 @@ class BlockchainService {
         });
     }
 
-    onClaimAdded(callback) {
+/*    onClaimAdded(callback) {
         this.trustedIssuersRegistryService.on("ClaimAdded", (identity, claimTopic, claim) => {
             callback(identity, claimTopic, claim);
         });
@@ -129,7 +129,7 @@ class BlockchainService {
         this.trustedIssuersRegistryService.on("ClaimRemoved", (identity, claimTopic) => {
             callback(identity, claimTopic);
         });
-    }
+    }*/
 
     onWalletLinked(callback) {
         this.trustedIssuersRegistryService.on("WalletLinked", (walletAddress, onchainID) => {
