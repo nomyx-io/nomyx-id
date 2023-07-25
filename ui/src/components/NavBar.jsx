@@ -1,13 +1,22 @@
 import { Link } from 'react-router-dom';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import {useEffect} from "react";
+import {useAccount} from "wagmi";
 
 const NavBar = ({
-  isConnected,
-  connectBlockchain,
-  disconnectBlockchain
+  onConnect
 }) => {
-  const handleConnect = async () => {
+  /*const handleConnect = async () => {
     await connectBlockchain();
-  };
+  };*/
+
+  const account = useAccount({
+    onConnect({ address, connector, isReconnected }) {
+      console.log('Connected', { address, connector, isReconnected });
+      onConnect(address, connector);
+    },
+  });
+
   return (
     <nav className="bg-white text-black p-6">
       <ul className="flex space-x-6">
@@ -44,12 +53,18 @@ const NavBar = ({
             <li><Link to="/issuers/create" className="hover:underline">Create</Link></li>
           </ul>
         </li>
-        <li className="hover:underline" style={{ marginLeft: 'auto', display: isConnected ? 'none' : 'block' }}>
+        <li style={{ marginLeft: 'auto'}}>
+          <ConnectButton />
+        </li>
+
+
+        {/*<li className="hover:underline" style={{ marginLeft: 'auto', display: isConnected ? 'none' : 'block' }}>
           <button onClick={handleConnect} className="bg-blue-500 text-white px-4 py-2 rounded mr-4">Connect</button>
         </li>
         <li className="hover:underline" style={{ marginLeft: 'auto', display: isConnected ? 'block' : 'none' }}>
           <button onClick={disconnectBlockchain} className="bg-red-500 text-white px-4 py-2 rounded mr-4">Disconnect</button>
-        </li>
+        </li>*/}
+
       </ul>
     </nav>
   );

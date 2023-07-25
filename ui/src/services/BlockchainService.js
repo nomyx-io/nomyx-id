@@ -5,12 +5,20 @@ import * as IdentityRegistry from "../abi/IIdentityRegistry.json";
 import * as TrustedIssuersRegistry from '../abi/ITrustedIssuersRegistry.json';
 
 class BlockchainService {
-    claimTopicsAbi = ClaimTopicsRegistry;
-    identityRegistryAbi = IdentityRegistry;
-    trustedIssuersRegistryAbi = TrustedIssuersRegistry;
+    claimTopicsAbi = ClaimTopicsRegistry.default.abi;
+    identityRegistryAbi = IdentityRegistry.default.abi;
+    trustedIssuersRegistryAbi = TrustedIssuersRegistry.default.abi;
 
     constructor(provider, contractAddress) {
-        this.provider = new ethers.providers.JsonRpcProvider(provider);
+
+        console.log("provider:");
+        console.log(provider);
+
+        console.log("contractAddress:");
+        console.log(contractAddress);
+
+        // this.provider = new ethers.providers.JsonRpcProvider(provider);
+        this.provider = provider;
         this.signer = this.provider.getSigner();
 
         this.claimTopicRegistryService = new ethers.Contract(contractAddress, this.claimTopicsAbi, this.provider);

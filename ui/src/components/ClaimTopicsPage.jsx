@@ -6,8 +6,6 @@ import ObjectList from './ObjectList';
 
 const ClaimTopicsPage = ({ service }) => {
 
-  const [claimTopics, setClaimTopics] = useState([]);
-
   const columns = [
     {label:"Id", name:"id"},
     {label:"Claim Topic", name:"name", width:"95%"}
@@ -21,6 +19,8 @@ const ClaimTopicsPage = ({ service }) => {
     // {label:"Create Claim Topic", name:"create", confirmation:"You are about to do something. Do you wish to proceed?"}
     {label:"Create Claim Topic", name:"create"}
   ];
+
+  const [claimTopics, setClaimTopics] = useState([]);
 
   useEffect( () => {
     async function getClaimTopics() {
