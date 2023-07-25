@@ -1,8 +1,10 @@
 import { Button, Input } from 'antd'
 import React from 'react'
+import { useParams } from 'react-router-dom'
 
 function DigitalIdentityDetailView() {
     const [displayName, setDisplayName] = React.useState('')
+    const { selectedId } = useParams()
 
     const CardData = [
         {
