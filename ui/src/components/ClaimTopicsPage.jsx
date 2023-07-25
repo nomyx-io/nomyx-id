@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Checkbox, Modal, Input } from 'antd';
-
-
-import ObjectList from './ObjectList';
+import {useNavigate} from "react-router-dom";
+import Constants from "../utils/Constants"
+import ObjectList from "./ObjectList";
 
 const ClaimTopicsPage = ({ service }) => {
+
+  const navigate = useNavigate();
+  const [claimTopics, setClaimTopics] = useState([]);
 
   const columns = [
     {label:"Id", name:"attributes.topic"},
@@ -13,23 +15,27 @@ const ClaimTopicsPage = ({ service }) => {
 
   const actions = [
     // "view",
-    {label:"View", name:"view", confirmation:"You are about to do something. Do you wish to proceed?"}
+    // {label:"View", name:Constants.ACTION_VIEW_CLAIM_TOPIC, confirmation:"You are about to do something. Do you wish to proceed?"}
+    {label:"View", name:Constants.ACTION_VIEW_CLAIM_TOPIC}
   ];
 
   const globalActions = [
     // {label:"Create Claim Topic", name:"create", confirmation:"You are about to do something. Do you wish to proceed?"}
-    {label:"Create Claim Topic", name:"create"}
+    {label:"Create Claim Topic", name:Constants.ACTION_CREATE_CLAIM_TOPIC}
   ];
 
-  const [claimTopics, setClaimTopics] = useState([]);
   const search = true;
-  
-  const handleAction = async (action, object) => {
-    console.log(action, object);
-    //create a claim topic
-    // let claimTopicId = Math.round(Math.random()*10000000);
-    // let response = await blockchainService.addClaimTopic(claimTopicId);
 
+  const handleAction = async (event, action, record) => {
+    switch(action){
+      case Constants.ACTION_CREATE_CLAIM_TOPIC:
+        navigate("/topics/create");
+        break;
+      case Constants.ACTION_VIEW_CLAIM_TOPIC:
+        let id = record.id;
+        navigate("/topics/" + id);
+        break;
+    }
   }
 
   useEffect( () => {

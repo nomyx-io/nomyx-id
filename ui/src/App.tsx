@@ -33,14 +33,12 @@ import TrustedIssuersPage from './components/TrustedIssuersPage.jsx';
 import IdentitiesPage from './components/IdentitiesPage.jsx';
 import ClaimsPage from './components/ClaimsPage.jsx';
 import CreateClaimTopic from './components/CreateClaimTopic.jsx';
-
+import ViewClaimTopic from "./components/ViewClaimTopic";
 import BlockchainService from './services/BlockchainService.js';
 import CreateDigitalId from './components/CreateDigitalId.jsx';
 import Login from './components/LoginPage.jsx';
 import EditClaim  from './components/EditClaim.jsx';
 import TestService from "./services/TestService";
-
-
 
 const localhost: Chain = {
 	id: 31337,
@@ -239,13 +237,14 @@ function App() {
 						<Routes>
 							<Route path="/" element={<Home />} />
 							<Route path="/topics" element={<ClaimTopicsPage service={blockchainService} />} />
+							<Route path="/topics/create" element={<CreateClaimTopic service={blockchainService}/>} />
+							<Route path="/topics/:topicId" element={<ViewClaimTopic service={blockchainService}/>} />
 							<Route path="/issuers" element={<TrustedIssuersPage service={blockchainService} />} />
 							<Route path="/identities" element={<IdentitiesPage service={blockchainService} />} />
+							<Route path="/identities/create" element={<CreateDigitalId />} />
 							<Route path="/claims" element={<ClaimsPage service={blockchainService} />} />
 							<Route path="/claims/edit" element={<EditClaim service={blockchainService} />} />
 							<Route path="/login" element={<Login />} />
-							<Route path="/identities/create" element={<CreateDigitalId />} />
-							<Route path="/topics/create" element={<CreateClaimTopic  service={blockchainService} />} />
 						</Routes>
 					</div>
 				</Router>
