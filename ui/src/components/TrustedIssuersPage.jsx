@@ -101,52 +101,52 @@ const TrustedIssuersPage = ({ service }) => {
     };
 
     const columns = [
-        {label:"Trusted Issuer", name:"id",width:"20%"},
-        {label:"Managed Claim Topics", name:"claim_topics", width:"65%"},
-      ];
-    
-      const actions = [
-        {label:"Update Claim Topics", name:"update", confirmation:"You are about to do something. Do you wish to proceed?"},
-        {label:"View IDs", name:"View", confirmation:"You are about to do something. Do you wish to proceed?"}
-      ];
-      const globalActions = [
-        {label:"Create Trusted Issuer", name:"create"}
-      ];
-    
-      const search = true;
-    
-      const data = [];
-    
-      for(let i=1; i<=200; i++){
+        { label: "Trusted Issuer", name: "id", width: "20%" },
+        { label: "Managed Claim Topics", name: "claim_topics", width: "65%" },
+    ];
+
+    const actions = [
+        { label: "Update Claim Topics", name: "update", confirmation: "You are about to do something. Do you wish to proceed?" },
+        { label: "View IDs", name: "View", confirmation: "You are about to do something. Do you wish to proceed?" }
+    ];
+    const globalActions = [
+        { label: "Create Trusted Issuer", name: "create" }
+    ];
+
+    const search = true;
+
+    const data = [];
+
+    for (let i = 1; i <= 200; i++) {
         data.push({
-          id: i,
-          claim_topics: "Object " + i,
-          description: "This is object " + i,
-          status: "active"
+            id: i,
+            claim_topics: "Object " + i,
+            description: "This is object " + i,
+            status: "active"
         });
-      };
-    
-    
-      const handleAction = async (action, object) => {
+    };
+
+
+    const handleAction = async (action, object) => {
         console.log(action, object);
-      }
+    }
 
     return (
-		<div className="p-6">
-			<ObjectList
-				title="Trusted Issuers"
-				description="Trusted Issuers can create Digital Identities and add Claim Topics to them"
-				columns={columns}
-				actions={actions}
-				globalActions={globalActions}
-				search={search}
-				data={data}
-				pageSize={10}
-				onAction={handleAction}
-				onGlobalAction={handleAction}
-			/>
-		</div>
-	);
+        <div className="p-6">
+            <ObjectList
+                title="Trusted Issuers"
+                description="Trusted Issuers can create Digital Identities and add Claim Topics to them"
+                columns={columns}
+                actions={actions}
+                globalActions={globalActions}
+                search={search}
+                data={data}
+                pageSize={10}
+                onAction={handleAction}
+                onGlobalAction={handleAction}
+            />
+        </div>
+    );
 };
 
 // Trusted Issuers List Item
