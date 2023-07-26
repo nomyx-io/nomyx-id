@@ -8,22 +8,18 @@ import Home from './components/Home.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
-
-
-import '@rainbow-me/rainbowkit/styles.css';
 import {
 	getDefaultWallets,
 	RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
-import { useAccount, configureChains, createConfig, WagmiConfig } from 'wagmi';
+import {useAccount, configureChains, createConfig, WagmiConfig, Chain} from 'wagmi';
 import {
 	mainnet,
 	polygon,
 	optimism,
 	arbitrum,
 	zora,
-	sepolia,
-	goerli
+	sepolia
 } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
@@ -46,10 +42,29 @@ import TestService from "./services/TestService";
 
 
 
+const localhost: Chain = {
+	id: 31337,
+	name: 'Localhost',
+	network: 'localhost',
+	nativeCurrency: {
+		decimals: 18,
+		name: 'Ethereum',
+		symbol: 'ETH',
+	},
+	rpcUrls: {
+		default: {
+			http: ['http://0.0.0.0:8545/']
+		},
+		public:{
+			http: ['http://0.0.0.0:8545/']
+		}
+	},
+	testnet: true,
+};
 
 
 const { chains, publicClient } = configureChains(
-	[mainnet, polygon, optimism, arbitrum, zora, sepolia],
+	[mainnet, polygon, optimism, arbitrum, zora, sepolia, localhost],
 	[
 		alchemyProvider({ apiKey: 'CSgNtTJ6_Clrf1zNjVp2j1ppfLE2-aVX'}),
 		publicProvider()
@@ -230,7 +245,7 @@ function App() {
 							<Route path="/claims/edit" element={<EditClaim service={blockchainService} />} />
 							<Route path="/login" element={<Login />} />
 							<Route path="/identities/create" element={<CreateDigitalId />} />
-							<Route path="/topics/create" element={<CreateClaimTopic />} />
+							<Route path="/topics/create" element={<CreateClaimTopic  service={blockchainService} />} />
 						</Routes>
 					</div>
 				</Router>

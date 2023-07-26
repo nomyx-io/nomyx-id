@@ -3,6 +3,8 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import {useEffect} from "react";
 import {useAccount} from "wagmi";
 
+import '@rainbow-me/rainbowkit/styles.css';
+
 const NavBar = ({
   onConnect
 }) => {
