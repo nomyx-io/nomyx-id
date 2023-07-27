@@ -39,6 +39,27 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
     const [showDialog, setShowDialog] = useState(false);
     const [dialogContent, setDialogContent] = useState(null);
 
+    //todo: move to util class
+    const getValue = (fieldName, record) => {
+
+        const path = fieldName.split(".");
+        let key
+        let value = record;
+
+        for(let i = 0; i < path.length; i++){
+
+            key = path[i];
+
+            if(value[key]){
+                value = value[key];
+            }else{
+                value = "";
+            }
+        }
+
+        return value;
+    };
+
     const handleAction = (action, confirm, object) => {
         
         if(confirm){
@@ -60,6 +81,8 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
         setActiveTab(tab.id);
     }
 
+
+    //todo: fix filtering to recurse through object properties
     const handleSearch = (text) => {
         setSearchText(text);
 
@@ -93,12 +116,13 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
     };
 
     useEffect(() => {
-        if(!searchText && filteredData.length==0 && data.length > 0)setFilteredData(data);
+        if(!searchText && data.length > 0)setFilteredData(data);
         const endOffset = itemOffset + pageSize;
         let pageData = filteredData.slice(itemOffset, endOffset);
         setPageData(pageData);
         setPageCount(Math.ceil(filteredData.length / pageSize));
     }, [itemOffset, pageSize, showDialog, data, filteredData]);
+
 
     return (
         <div className="container">
@@ -165,7 +189,7 @@ const ObjectList = ({ title, description, tabs, columns, actions, globalActions,
                                     let fieldName = typeof column === "object" ? column.name : column;
                                     let key = fieldName + '-' + record.id;
                                     return (
-                                        <td key={key}>{record[fieldName]}</td>
+                                        <td key={key}>{getValue(fieldName, record)}</td>
                                     )
                                 })}
                                 <td key={"actions" + record.id}>

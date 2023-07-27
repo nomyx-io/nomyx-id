@@ -157,14 +157,13 @@ class BlockchainService {
 
     // Setters
     async addClaimTopic(claimTopic) {
-
         const contractWithSigner = this.claimTopicRegistryService.connect(this.signer);
         const tx = await contractWithSigner.addClaimTopic(claimTopic);
-        await tx.wait();
+        return await tx.wait();
     }
 
     async updateClaimTopic(claimTopic){
-        return await this.parseClient.createOrUpdateRecord(
+        return await this.parseClient.updateExistingRecord(
             'ClaimTopic',
             ['topic'],
             [claimTopic.topic],
@@ -182,7 +181,7 @@ class BlockchainService {
     async getClaimTopics() {
 
         const claimTopics = await this.parseClient.getRecords(
-            'ClaimTopic'
+            'ClaimTopic', [], [], ["*"]
         );
 
         return claimTopics;

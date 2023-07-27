@@ -1,26 +1,48 @@
 import { Button, Input } from 'antd'
 import React from 'react'
 
+let addedAddListener = false;
+
 function CreateClaimTopic({service}) {
     const [displayName, setDisplayName] = React.useState('');
     const [hiddenName, setHiddenName] = React.useState('');
 
 
+    //fixme: displayName doesn't get updated after first call
+    const updateClaimTopic = async (claimTopic) => {
+
+        console.log('updateClaimTopic');
+        console.log('claimTopic = ' + claimTopic);
+        console.log('displayName = ' + displayName);
+
+        const result = await service.updateClaimTopic(
+            {
+                topic: claimTopic+"",
+                displayName: displayName
+            }
+        );
+
+        console.log('updateClaimTopic result:');
+        console.log(result);
+    };
+
     const saveClaimTopic = async () => {
       console.log('saveClaimTopic');
 
-        service.onClaimTopicAdded(async () => {
-            console.log('onClaimTopicAdded!');
-            const result = await service.updateClaimTopic(
-                {
-                    topic: hiddenName,
-                    displayName: displayName
-                }
-            );
+        if(!addedAddListener){
 
-            console.log('updateClaimTopic result:');
-            console.log(result);
-        });
+            console.log('adding listener');
+
+            service.onClaimTopicAdded(async (claimTopic) => {
+
+                console.log('onClaimTopicAdded!');
+                console.log(claimTopic.toNumber());
+                updateClaimTopic(claimTopic.toNumber());
+
+            });
+
+            addedAddListener = true;
+        }
 
         let result = await service.addClaimTopic(hiddenName);
 
