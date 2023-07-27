@@ -85,8 +85,9 @@ const TrustedIssuersPage = ({ service }) => {
 
     useEffect(() => {
         async function fetchData() {
-            const issuers = await service.getTrustedIssuers && service.getTrustedIssuers();
-            setTrustedIssuers(issuers);
+            const issuers =  service.getTrustedIssuers && await service.getTrustedIssuers();
+            console.log('issuers',issuers);
+            issuers && setTrustedIssuers(issuers);
         }
 
         fetchData();
@@ -101,8 +102,8 @@ const TrustedIssuersPage = ({ service }) => {
     };
 
     const columns = [
-        { label: "Trusted Issuer", name: "id", width: "20%" },
-        { label: "Managed Claim Topics", name: "claim_topics", width: "65%" },
+        { label: "Trusted Issuer", name: "attributes?.issuer", width: "20%" },
+        { label: "Managed Claim Topics", name: "id", width: "65%" },
     ];
 
     const actions = [
@@ -114,18 +115,6 @@ const TrustedIssuersPage = ({ service }) => {
     ];
 
     const search = true;
-
-    const data = [];
-
-    for (let i = 1; i <= 200; i++) {
-        data.push({
-            id: i,
-            claim_topics: "Object " + i,
-            description: "This is object " + i,
-            status: "active"
-        });
-    };
-
 
     const handleAction = async (action, object) => {
         console.log(action, object);
@@ -140,7 +129,7 @@ const TrustedIssuersPage = ({ service }) => {
                 actions={actions}
                 globalActions={globalActions}
                 search={search}
-                data={data}
+                data={trustedIssuers}
                 pageSize={10}
                 onAction={handleAction}
                 onGlobalAction={handleAction}

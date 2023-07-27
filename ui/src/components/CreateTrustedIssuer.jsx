@@ -1,29 +1,53 @@
-import { Button, Input } from 'antd'
-import React from 'react'
-import { Transfer } from 'antd'
+import {Button, Input} from 'antd';
+import React, {useEffect} from 'react';
+import {Transfer} from 'antd';
+let addedAddListener = false;
 
-function CreateTrustedIssuer() {
-    const [verifierName, setVerifierName] = React.useState('')
-    const [walletAddress, setWalletAddress] = React.useState('')
+function CreateTrustedIssuer({service}) {
+	const [verifierName, setVerifierName] = React.useState('Yash');
+	const [walletAddress, setWalletAddress] = React.useState('0x3AAF0e6023A2745FB62052c1954260559fFF4947');
+	const [claimTopics, setClaimTopics] = React.useState([]);
+	const [selectedChips, setSelectedChips] = React.useState([]);
 
-    const mockData = Array.from({
-        length: 5,
-    }).map((_, i) => ({
-        key: i.toString(),
-        title: `content${i + 1}`,
-        description: `description of content${i + 1}`,
-    }));
-    const initialTargetKeys = mockData.filter((item) => Number(item.key) > 10).map((item) => item.key);
+	const handleChipClick = (label) => {
+		if (selectedChips.includes(label)) {
+			setSelectedChips(selectedChips.filter((chip) => chip !== label));
+		} else {
+			setSelectedChips([...selectedChips, label]);
+		}
+	};
 
-    const [targetKeys, setTargetKeys] = React.useState(initialTargetKeys);
-    const [selectedKeys, setSelectedKeys] = React.useState([]);
+	useEffect(() => {
+		(async function () {
+			const result = await service.getClaimTopics();
+            console.log('result',result);
+			setClaimTopics(result);
+		})();
+	}, [service]);
 
-    const onChange = (nextTargetKeys, direction, moveKeys) => {
-        setTargetKeys(nextTargetKeys);
-    };
-    const onSelectChange = (sourceSelectedKeys, targetSelectedKeys) => {
-        setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
-    };
+	const updateTrustedIssuer = async (trustedIssuer, claimTopics) => {
+		console.log('updateTrustedIssuer',trustedIssuer, claimTopics);
+		const result = await service.updateTrustedIssuer({
+            verifierName:verifierName+"",
+			trustedIssuer: trustedIssuer+"",
+			// claimTopics: selectedChips,
+		});
+		console.log('updateTrustedIssuer result:',result);
+	};
+
+	const saveTrustedIssuer = async () => {
+		console.log('saveTrustedIssuer');
+		if (!addedAddListener) {
+			console.log('adding listener');
+			service.onTrustedIssuerAdded(async (trustedIssuer, claimTopics) => {
+				console.log('onTrustedIssuerAdded!');
+				updateTrustedIssuer(trustedIssuer, claimTopics);
+			});
+			addedAddListener = true;
+		}
+		let result = await service.addTrustedIssuer(walletAddress, selectedChips);
+		console.log('addTrustedIssuer result:',result);
+	};
 
     return (
         <div >
@@ -45,34 +69,39 @@ function CreateTrustedIssuer() {
                     </div>
                     <p className='my-4'>Manage Claim Topic IDs</p>
                 </div>
-                <div className="flex flex-col items-center my-5">
-                    <div>
-                        <div className='flex gap-28'>
-                            <p>
-                                Available Claims
-                            </p>
-                            <p>
-                                Selected Claims
-                            </p>
-                        </div>
-                        <Transfer
-                            showSelectAll={false}
-                            dataSource={mockData}
-                            titles={['Source', 'Target']}
-                            targetKeys={targetKeys}
-                            selectedKeys={selectedKeys}
-                            onChange={onChange}
-                            onSelectChange={onSelectChange}
-                            render={(item) => item.title}
-                        />
-                    </div>
-                </div>
-                <div className='flex justify-end max-[600px]:justify-center'>
-                    <Button className='max-[600px]:w-[60%] min-w-max text-center font-semibold rounded h-11 bg-[#7F56D9] text-white'>Create Trusted Issuer</Button>
-                </div>
-            </div>
-        </div>
-    )
+				<div className="flex flex-wrap gap-2">
+					{claimTopics &&
+						claimTopics.length > 0 &&
+						claimTopics.map((chip) => (
+							chip.attributes?.displayName && <Chip
+								key={chip.id}
+								label={chip.attributes?.displayName}
+								selected={selectedChips.includes(chip.attributes?.topic)}
+								onClick={() => handleChipClick(chip.attributes?.topic)}
+							/>
+						))}
+				</div>
+				<div className="flex justify-end max-[600px]:justify-center">
+					<Button
+						className="max-[600px]:w-[60%] min-w-max text-center font-semibold rounded h-11 bg-[#7F56D9] text-white"
+						onClick={saveTrustedIssuer}
+					>
+						Create Trusted Issuer
+					</Button>
+				</div>
+			</div>
+		</div>
+	);
 }
+const Chip = ({label, selected, onClick}) => {
+	return (
+		<button
+			className={`px-4 py-2 rounded-full ${selected ? 'bg-[#7F56D9] text-white' : 'bg-gray-300 text-gray-700'}`}
+			onClick={onClick}
+		>
+			{label}
+		</button>
+	);
+};
 
 export default CreateTrustedIssuer

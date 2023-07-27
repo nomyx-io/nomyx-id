@@ -282,7 +282,8 @@ class BlockchainService {
     }
 
     async addTrustedIssuer(trustedIssuer, claimTopics) {
-        const tx = await this.trustedIssuersRegistryService.addTrustedIssuer(trustedIssuer, claimTopics);
+        const contract = this.trustedIssuersRegistryService.connect(this.signer);
+        const tx = await contract.addTrustedIssuer(trustedIssuer, claimTopics);
         await tx.wait();
         return tx;
     }
@@ -300,7 +301,20 @@ class BlockchainService {
     }
 
     async getTrustedIssuers() {
-        return await this.trustedIssuersRegistryService.getTrustedIssuers();
+        const trustedIssuer = await this.parseClient.getRecords(
+            'TrustedIssuer', [], [], ["*"]
+        );
+        return trustedIssuer;
+    }
+
+
+    async updateTrustedIssuer(data){
+        return await this.parseClient.updateExistingRecord(
+            'TrustedIssuer',
+            ['trustedIssuer'],
+            [data.trustedIssuer],
+            data
+        );
     }
 
     async isTrustedIssuer(issuer) {

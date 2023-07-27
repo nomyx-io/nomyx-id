@@ -247,8 +247,8 @@ function App() {
 							<Route path="/claims/edit" element={<EditClaim service={blockchainService} />} />
 							<Route path="/login" element={<Login />} />
 							<Route path="/identities/create" element={<CreateDigitalId />} />
-              <Route path="/identities/:selectedId" element={<DigitalIdentityDetailView />} />
-          		<Route path="/issuers/create" element={<CreateTrustedIssuer />} />
+							<Route path="/identities/:selectedId" element={<DigitalIdentityDetailView />} />
+							<Route path="/issuers/create" element={<CreateTrustedIssuer   service={blockchainService}/>} />
 							<Route path="/topics/create" element={<CreateClaimTopic  service={blockchainService} />} />
 						</Routes>
 					</div>
