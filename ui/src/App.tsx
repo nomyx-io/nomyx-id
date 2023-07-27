@@ -40,6 +40,7 @@ import CreateDigitalId from './components/CreateDigitalId.jsx';
 import Login from './components/LoginPage.jsx';
 import EditClaim  from './components/EditClaim.jsx';
 import TestService from "./services/TestService";
+import CreateTrustedIssuer from './components/CreateTrustedIssuer.jsx';
 
 
 
