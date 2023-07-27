@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { List, Button, Modal, Input, Checkbox } from 'antd';
 import ObjectList from './ObjectList';
+import { useNavigate } from 'react-router-dom';
 
 const IdentitiesPage = ({ service }) => {
+    const navigate = useNavigate()
     const [identities, setIdentities] = useState([]);
     const [selectedIdentities, setSelectedIdentities] = useState([]);
     const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
@@ -40,54 +42,57 @@ const IdentitiesPage = ({ service }) => {
     };
 
     const columns = [
-        {label:"Identities", name:"identities",width:"20%"},
-        {label:"Claims", name:"claims"},
-        {label:"KUC ID Account #", name:"kyc_id"},
-      ];
-    
-      const actions = [
-        {label:"Add Claim", name:"add", confirmation:"You are about to do something. Do you wish to proceed?"},
-        {label:"View", name:"view", confirmation:"You are about to do something. Do you wish to proceed?"},
-        {label:"Remove", name:"remove", confirmation:"You are about to do something. Do you wish to proceed?"}
-      ];
-      const globalActions = [
-        {label:"Create identity", name:"create"}
-      ];
-    
-      const search = true;
-    
-      const data = [];
-    
-      for(let i=1; i<=200; i++){
+        { label: "Identities", name: "identities", width: "20%" },
+        { label: "Claims", name: "claims" },
+        { label: "KUC ID Account #", name: "kyc_id" },
+    ];
+
+    const actions = [
+        { label: "Add Claim", name: "add", confirmation: "You are about to do something. Do you wish to proceed?" },
+        { label: "View", name: "view", confirmation: "You are about to do something. Do you wish to proceed?" },
+        { label: "Remove", name: "remove", confirmation: "You are about to do something. Do you wish to proceed?" }
+    ];
+    const globalActions = [
+        { label: "Create identity", name: "create" }
+    ];
+
+    const search = true;
+
+    const data = [];
+
+    for (let i = 1; i <= 200; i++) {
         data.push({
-          identities: i,
-          claims: "Object " + i,
-          kyc_id:"Kyc"+ i, 
-          status: "active"
+            identities: i,
+            claims: "Object " + i,
+            kyc_id: "Kyc" + i,
+            status: "active"
         });
-      };
-    
-    
-      const handleAction = async (action, object) => {
-        console.log(action, object);  
-      }
+    };
+
+
+    const handleAction = async (action, object) => {
+        console.log(action, object);
+        if (action == "view") {
+            navigate('/identities/' + object.identities)
+        }
+    }
 
     return (
-		<>
-			<ObjectList
-				title="Identities"
-				description="Identities represent individuals that can be related to Claim Topics"
-				columns={columns}
-				actions={actions}
-				globalActions={globalActions}
-				search={search}
-				data={data}
-				pageSize={10}
-				onAction={handleAction}
-				onGlobalAction={handleAction}
-			/>
-		</>
-	);
+        <>
+            <ObjectList
+                title="Identities"
+                description="Identities represent individuals that can be related to Claim Topics"
+                columns={columns}
+                actions={actions}
+                globalActions={globalActions}
+                search={search}
+                data={data}
+                pageSize={10}
+                onAction={handleAction}
+                onGlobalAction={handleAction}
+            />
+        </>
+    );
 };
 
 

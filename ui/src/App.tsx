@@ -32,6 +32,7 @@ import ClaimTopicsPage from './components/ClaimTopicsPage.jsx';
 import TrustedIssuersPage from './components/TrustedIssuersPage.jsx';
 import IdentitiesPage from './components/IdentitiesPage.jsx';
 import ClaimsPage from './components/ClaimsPage.jsx';
+import DigitalIdentityDetailView from './components/DigitalIdentityDetailPage.jsx';
 import CreateClaimTopic from './components/CreateClaimTopic.jsx';
 
 import BlockchainService from './services/BlockchainService.js';
@@ -39,6 +40,7 @@ import CreateDigitalId from './components/CreateDigitalId.jsx';
 import Login from './components/LoginPage.jsx';
 import EditClaim  from './components/EditClaim.jsx';
 import TestService from "./services/TestService";
+import CreateTrustedIssuer from './components/CreateTrustedIssuer.jsx';
 
 
 
@@ -245,6 +247,8 @@ function App() {
 							<Route path="/claims/edit" element={<EditClaim service={blockchainService} />} />
 							<Route path="/login" element={<Login />} />
 							<Route path="/identities/create" element={<CreateDigitalId />} />
+              <Route path="/identities/:selectedId" element={<DigitalIdentityDetailView />} />
+          		<Route path="/issuers/create" element={<CreateTrustedIssuer />} />
 							<Route path="/topics/create" element={<CreateClaimTopic  service={blockchainService} />} />
 						</Routes>
 					</div>
