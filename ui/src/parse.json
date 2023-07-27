@@ -1,0 +1,5 @@
+{
+  "applicationId": "lenderLabs",
+  "masterKey": "lenderLabsMasterKey",
+  "serverURL": "http://104.207.134.90:8337/parse"
+}

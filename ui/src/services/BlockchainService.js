@@ -3,14 +3,24 @@ import { ethers } from "ethers";
 import * as ClaimTopicsRegistry from "../abi/IClaimTopicsRegistry.json";
 import * as IdentityRegistry from "../abi/IIdentityRegistry.json";
 import * as TrustedIssuersRegistry from '../abi/ITrustedIssuersRegistry.json';
+import ParseClient from './ParseClient.ts';
 
 class BlockchainService {
-    claimTopicsAbi = ClaimTopicsRegistry;
-    identityRegistryAbi = IdentityRegistry;
-    trustedIssuersRegistryAbi = TrustedIssuersRegistry;
+    claimTopicsAbi = ClaimTopicsRegistry.default.abi;
+    identityRegistryAbi = IdentityRegistry.default.abi;
+    trustedIssuersRegistryAbi = TrustedIssuersRegistry.default.abi;
+    parseClient = ParseClient;
 
     constructor(provider, contractAddress) {
-        this.provider = new ethers.providers.JsonRpcProvider(provider);
+
+        console.log("provider:");
+        console.log(provider);
+
+        console.log("contractAddress:");
+        console.log(contractAddress);
+
+        // this.provider = new ethers.providers.JsonRpcProvider(provider);
+        this.provider = provider;
         this.signer = this.provider.getSigner();
 
         this.claimTopicRegistryService = new ethers.Contract(contractAddress, this.claimTopicsAbi, this.provider);
@@ -50,6 +60,8 @@ class BlockchainService {
         this.isTrustedIssuer = this.isTrustedIssuer.bind(this);
         this.getTrustedIssuerClaimTopics = this.getTrustedIssuerClaimTopics.bind(this);
         this.hasClaimTopic = this.hasClaimTopic.bind(this);
+
+        this.parseClient.initialize();
     }
 
     // Event listeners
@@ -147,7 +159,16 @@ class BlockchainService {
     async addClaimTopic(claimTopic) {
         const contractWithSigner = this.claimTopicRegistryService.connect(this.signer);
         const tx = await contractWithSigner.addClaimTopic(claimTopic);
-        await tx.wait();
+        return await tx.wait();
+    }
+
+    async updateClaimTopic(claimTopic){
+        return await this.parseClient.updateExistingRecord(
+            'ClaimTopic',
+            ['topic'],
+            [claimTopic.topic],
+            claimTopic
+        );
     }
 
     async removeClaimTopic(claimTopic) {
@@ -158,7 +179,12 @@ class BlockchainService {
 
     // Getter
     async getClaimTopics() {
-        return await this.claimTopicRegistryService.getClaimTopics();
+
+        const claimTopics = await this.parseClient.getRecords(
+            'ClaimTopic', [], [], ["*"]
+        );
+
+        return claimTopics;
     }
 
 

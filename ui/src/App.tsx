@@ -7,6 +7,25 @@ import Home from './components/Home.jsx';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+
+import {
+	getDefaultWallets,
+	RainbowKitProvider,
+} from '@rainbow-me/rainbowkit';
+import {useAccount, configureChains, createConfig, WagmiConfig, Chain} from 'wagmi';
+import {
+	mainnet,
+	polygon,
+	optimism,
+	arbitrum,
+	zora,
+	sepolia
+} from 'wagmi/chains';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { publicProvider } from 'wagmi/providers/public';
+
+
+
 import './App.css';
 
 import ClaimTopicsPage from './components/ClaimTopicsPage.jsx';
@@ -20,10 +39,52 @@ import BlockchainService from './services/BlockchainService.js';
 import CreateDigitalId from './components/CreateDigitalId.jsx';
 import Login from './components/LoginPage.jsx';
 import EditClaim  from './components/EditClaim.jsx';
-import CreateTrustedIssuer from './components/CreateTrustedIssuer.jsx';
 import TestService from "./services/TestService";
 
-function UnsupportedNetworkDialog(props: any) {
+
+
+const localhost: Chain = {
+	id: 31337,
+	name: 'Localhost',
+	network: 'localhost',
+	nativeCurrency: {
+		decimals: 18,
+		name: 'Ethereum',
+		symbol: 'ETH',
+	},
+	rpcUrls: {
+		default: {
+			http: ['http://0.0.0.0:8545/']
+		},
+		public:{
+			http: ['http://0.0.0.0:8545/']
+		}
+	},
+	testnet: true,
+};
+
+
+const { chains, publicClient } = configureChains(
+	[mainnet, polygon, optimism, arbitrum, zora, sepolia, localhost],
+	[
+		alchemyProvider({ apiKey: 'CSgNtTJ6_Clrf1zNjVp2j1ppfLE2-aVX'}),
+		publicProvider()
+	]
+);
+
+const { connectors } = getDefaultWallets({
+	appName: 'LL Testing',
+	projectId: 'ae575761a72370ab88834655acbba677',
+	chains
+});
+
+const wagmiConfig = createConfig({
+	autoConnect: true,
+	connectors,
+	publicClient
+})
+
+/*function UnsupportedNetworkDialog(props: any) {
 
   const { currentNetwork, supportedNetworks, visible, onClose, onSwitchNetwork } = props;
 
@@ -68,27 +129,64 @@ function UnsupportedNetworkDialog(props: any) {
       </div>
     </div>
   );
-}
+}*/
 
 function App() {
 
   const [isConnected, setIsConnected] = React.useState(false);
   const [currentNetwork, setCurrentNetwork] = React.useState(0);
   const [blockchainService, setBlockchainService] = React.useState(new TestService());
-  const [unsupportedNetworkDialogVisible, setUnsupportedNetworkDialogVisible] = React.useState(false);
+  // const [unsupportedNetworkDialogVisible, setUnsupportedNetworkDialogVisible] = React.useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
 
+
   useEffect(() => {
-	if(window.location.pathname.includes("/login")){
-		setLoggedIn(true)
-	}
-  }, [])
-  
+	  console.log('useEffect');
+	  if(window.location.pathname.includes("/login")){
+		  setLoggedIn(true)
+	  }
+  }, []);
+
+  const onConnect = async (address:any, connector:any) => {
+
+	  console.log('connected!');
+	  console.log('address = ' + address);
+	  console.log('connector = ' + connector);
+
+	  console.log("ethereum:");
+	  console.log((window as any).ethereum);
+
+	  const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+	  let jsonConfig: any = await import(`./config.json`);
+
+	  const network = provider.getNetwork().then((network:any)=>{
+
+		  const chainId = network.chainId;
+		  console.log('chainId = ' + chainId);
+		  setCurrentNetwork(network.chainId);
+
+		  const config = jsonConfig[chainId];
+
+		  if (!config) {
+			  // setUnsupportedNetworkDialogVisible(true);
+			  setIsConnected(false);
+			  return;
+		  }
+
+		  setIsConnected(true);
+
+		  const _blockchainService = new BlockchainService(provider, config.contract);
+		  setBlockchainService(_blockchainService);
+	  });
+  };
+
 
 	return (
-		<Router>
-			{/* Navigation Menu */}
-			<UnsupportedNetworkDialog
+		<WagmiConfig config={wagmiConfig}>
+			<RainbowKitProvider chains={chains}>
+				<Router>
+					{/* Navigation Menu */}
+{/*					<UnsupportedNetworkDialog
 						currentNetwork={currentNetwork}
 						supportedNetworks={[
 							{chainId: 1, name: 'Mainnet'},
@@ -100,10 +198,10 @@ function App() {
 						visible={unsupportedNetworkDialogVisible}
 						onClose={() => {}}
 						onSwitchNetwork={() => {}}
-					/>
+					/>*/}
 					<div className={`topnav p-0 ${loggedIn ? "hidden" : ""}`}>
 						<NavBar
-							isConnected={isConnected}
+							/*isConnected={isConnected}
 							connectBlockchain={async () => {
 								if ((window as any).ethereum) {
 									try {
@@ -112,11 +210,11 @@ function App() {
 
 										const network = await provider.getNetwork();
 										const chainId = network.chainId;
-										const config = jsonConfig[`${chainId}` as any];
+										const config = jsonConfig[chainId];
 
 										setCurrentNetwork(network.chainId);
 										if (!config) {
-											setUnsupportedNetworkDialogVisible(true);
+											// setUnsupportedNetworkDialogVisible(true);
 											setIsConnected(false);
 											return;
 										}
@@ -134,7 +232,8 @@ function App() {
 							}}
 							disconnectBlockchain={() => {
 								setIsConnected(false);
-							}}
+							}}*/
+							onConnect={onConnect}
 						/>
 					</div>
 					<div className={`${loggedIn ? "p-0 -ml-4 overflow-hidden" : "content"}`}>
@@ -144,15 +243,18 @@ function App() {
 							<Route path="/issuers" element={<TrustedIssuersPage service={blockchainService} />} />
 							<Route path="/identities" element={<IdentitiesPage service={blockchainService} />} />
 							<Route path="/claims" element={<ClaimsPage service={blockchainService} />} />
-              				<Route path="/claims/edit" element={<EditClaim service={blockchainService} />} />
+							<Route path="/claims/edit" element={<EditClaim service={blockchainService} />} />
 							<Route path="/login" element={<Login />} />
 							<Route path="/identities/create" element={<CreateDigitalId />} />
-              				<Route path="/topics/create" element={<CreateClaimTopic />} />
-              				<Route path="/identities/:selectedId" element={<DigitalIdentityDetailView />} />
-          					<Route path="/issuers/create" element={<CreateTrustedIssuer />} />
+              <Route path="/identities/:selectedId" element={<DigitalIdentityDetailView />} />
+          		<Route path="/issuers/create" element={<CreateTrustedIssuer />} />
+							<Route path="/topics/create" element={<CreateClaimTopic  service={blockchainService} />} />
 						</Routes>
 					</div>
-    </Router>
+				</Router>
+			</RainbowKitProvider>
+		</WagmiConfig>
+
   );
 }
 
