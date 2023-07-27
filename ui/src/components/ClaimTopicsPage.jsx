@@ -6,32 +6,22 @@ import ObjectList from './ObjectList';
 
 const ClaimTopicsPage = ({ service }) => {
 
-  const [claimTopics, setClaimTopics] = useState([]);
-
   const columns = [
-    {label:"Id", name:"id"},
-    {label:"Claim Topic", name:"name", width:"95%"}
+    {label:"Id", name:"attributes.topic"},
+    {label:"Claim Topic", name:"attributes.displayName", width:"95%"}
   ];
 
   const actions = [
     // "view",
     {label:"View", name:"view", confirmation:"You are about to do something. Do you wish to proceed?"}
   ];
+
   const globalActions = [
     // {label:"Create Claim Topic", name:"create", confirmation:"You are about to do something. Do you wish to proceed?"}
     {label:"Create Claim Topic", name:"create"}
   ];
 
-  useEffect( () => {
-    async function getClaimTopics() {
-      const result = await service.getClaimTopics();
-      setClaimTopics(result);
-    }
-
-    getClaimTopics();
-
-  }, [service]);
-
+  const [claimTopics, setClaimTopics] = useState([]);
   const search = true;
   
   const handleAction = async (action, object) => {
@@ -41,6 +31,13 @@ const ClaimTopicsPage = ({ service }) => {
     // let response = await blockchainService.addClaimTopic(claimTopicId);
 
   }
+
+  useEffect( () => {
+    (async function() {
+      const result = await service.getClaimTopics();
+      setClaimTopics(result);
+    })();
+  }, [service]);
 
   return (
       <ObjectList
