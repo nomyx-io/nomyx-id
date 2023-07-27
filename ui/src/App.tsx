@@ -42,6 +42,7 @@ import EditClaim  from './components/EditClaim.jsx';
 import TestService from "./services/TestService";
 import CreateTrustedIssuer from './components/CreateTrustedIssuer.jsx';
 
+import EditClaimSummaryView from './components/EditClaimSummaryView.jsx';
 
 
 const localhost: Chain = {
@@ -244,7 +245,8 @@ function App() {
 							<Route path="/issuers" element={<TrustedIssuersPage service={blockchainService} />} />
 							<Route path="/identities" element={<IdentitiesPage service={blockchainService} />} />
 							<Route path="/claims" element={<ClaimsPage service={blockchainService} />} />
-							<Route path="/claims/edit" element={<EditClaim service={blockchainService} />} />
+              				<Route path="/claims/edit" element={<EditClaim service={blockchainService} />} />
+              				<Route path="/claims/:transaction_id" element={<EditClaimSummaryView service={blockchainService} />} />
 							<Route path="/login" element={<Login />} />
 							<Route path="/identities/create" element={<CreateDigitalId />} />
               <Route path="/identities/:selectedId" element={<DigitalIdentityDetailView />} />
