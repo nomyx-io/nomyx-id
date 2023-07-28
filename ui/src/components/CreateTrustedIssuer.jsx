@@ -4,8 +4,8 @@ import {Transfer} from 'antd';
 let addedAddListener = false;
 
 function CreateTrustedIssuer({service}) {
-	const [verifierName, setVerifierName] = React.useState('Yash');
-	const [walletAddress, setWalletAddress] = React.useState('0x3AAF0e6023A2745FB62052c1954260559fFF4947');
+	const [verifierName, setVerifierName] = React.useState('');
+	const [walletAddress, setWalletAddress] = React.useState('');
 	const [claimTopics, setClaimTopics] = React.useState([]);
 	const [selectedChips, setSelectedChips] = React.useState([]);
 
