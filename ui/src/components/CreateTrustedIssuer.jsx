@@ -1,9 +1,9 @@
-import {Button, Input} from 'antd';
-import React, {useEffect} from 'react';
-import {Transfer} from 'antd';
+import { Button, Input } from 'antd';
+import React, { useEffect } from 'react';
+import { Transfer } from 'antd';
 let addedAddListener = false;
 
-function CreateTrustedIssuer({service}) {
+function CreateTrustedIssuer({ service }) {
 	const [verifierName, setVerifierName] = React.useState('');
 	const [walletAddress, setWalletAddress] = React.useState('');
 	const [claimTopics, setClaimTopics] = React.useState([]);
@@ -20,55 +20,58 @@ function CreateTrustedIssuer({service}) {
 	useEffect(() => {
 		(async function () {
 			const result = await service.getClaimTopics();
-            console.log('result',result);
+			console.log('result', result);
 			setClaimTopics(result);
 		})();
 	}, [service]);
 
 	const updateTrustedIssuer = async (trustedIssuer, claimTopics) => {
-		console.log('updateTrustedIssuer',trustedIssuer, claimTopics);
+		console.log('updateTrustedIssuer', trustedIssuer, claimTopics);
 		const result = await service.updateTrustedIssuer({
-            verifierName:verifierName+"",
-			trustedIssuer: trustedIssuer+"",
+			verifierName: verifierName,
 			claimTopics: selectedChips,
+			issuer: trustedIssuer
 		});
-		console.log('updateTrustedIssuer result:',result);
+		console.log('updateTrustedIssuer result:', result);
 	};
 
 	const saveTrustedIssuer = async () => {
-		console.log('saveTrustedIssuer');
-		if (!addedAddListener) {
-			console.log('adding listener');
-			service.onTrustedIssuerAdded(async (trustedIssuer, claimTopics) => {
-				console.log('onTrustedIssuerAdded!');
-				updateTrustedIssuer(trustedIssuer, claimTopics);
-			});
-			addedAddListener = true;
+		try {
+			console.log('saveTrustedIssuer');
+			if (!addedAddListener) {
+				console.log('adding listener');
+				service.onTrustedIssuerAdded(async (trustedIssuer, claimTopics) => {
+					console.log('onTrustedIssuerAdded!');
+					updateTrustedIssuer(trustedIssuer, claimTopics);
+				});
+				addedAddListener = true;
+			}
+			let result = await service.addTrustedIssuer(walletAddress, selectedChips);
+			console.log('addTrustedIssuer result:', result);
+		} catch (error) {
+			console.log("Error in adding trusted issuer", error);
 		}
-		let result = await service.addTrustedIssuer(walletAddress, selectedChips);
-		console.log('addTrustedIssuer result:',result);
 	};
 
-    return (
-        <div >
-            <p className='text-xl p-6'>Create Trusted Issuer</p>
-            <hr></hr>
-            <div className='p-6 mt-2'>
-                <div>
-                    <p>Trusted Issuer display name *</p>
-                    <div className='mt-3 relative w-full flex border rounded-lg'>
-                        <Input value={verifierName} className='border w-full p-2 rounded-lg text-xl' placeholder='ID Verifier Name' type='text' maxLength={32} onChange={(e) => setVerifierName(e.target.value)} />
-                        <p className='absolute right-5 top-2'>{verifierName.length}/32</p>
-                    </div>
-                </div>
-                <div className='mt-10 mb-6'>
-                    <p>Trusted Issuer Wallet *</p>
-                    <div className='mt-3 relative w-full flex border rounded-lg'>
-                        <Input value={walletAddress} className='border w-full p-2 rounded-lg text-xl' placeholder='Wallet Address' type='text' maxLength={32} onChange={(e) => setWalletAddress(e.target.value)} />
-                        <p className='absolute right-5 top-2'>{walletAddress.length}/32</p>
-                    </div>
-                    <p className='my-4'>Manage Claim Topic IDs</p>
-                </div>
+	return (
+		<div >
+			<p className='text-xl p-6'>Create Trusted Issuer</p>
+			<hr></hr>
+			<div className='p-6 mt-2'>
+				<div>
+					<p>Trusted Issuer display name *</p>
+					<div className='mt-3 relative w-full flex border rounded-lg'>
+						<Input value={verifierName} className='border w-full p-2 rounded-lg text-xl' placeholder='ID Verifier Name' type='text' maxLength={32} onChange={(e) => setVerifierName(e.target.value)} />
+						<p className='absolute right-5 top-2'>{verifierName.length}/32</p>
+					</div>
+				</div>
+				<div className='mt-10 mb-6'>
+					<p>Trusted Issuer Wallet *</p>
+					<div className='mt-3 relative w-full flex border rounded-lg'>
+						<Input value={walletAddress} className='border w-full p-2 rounded-lg text-xl' placeholder='Wallet Address' type='text' onChange={(e) => setWalletAddress(e.target.value)} />
+					</div>
+					<p className='my-4'>Manage Claim Topic IDs</p>
+				</div>
 				<div className="flex flex-wrap gap-2">
 					{claimTopics &&
 						claimTopics.length > 0 &&
@@ -93,7 +96,7 @@ function CreateTrustedIssuer({service}) {
 		</div>
 	);
 }
-const Chip = ({label, selected, onClick}) => {
+const Chip = ({ label, selected, onClick }) => {
 	return (
 		<button
 			className={`px-4 py-2 rounded-full ${selected ? 'bg-[#7F56D9] text-white' : 'bg-gray-300 text-gray-700'}`}

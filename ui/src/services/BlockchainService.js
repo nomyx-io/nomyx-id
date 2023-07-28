@@ -311,7 +311,7 @@ class BlockchainService {
         return await this.parseClient.createOrUpdateRecord(
             'TrustedIssuer',
             ['issuer'],
-            [data.trustedIssuer],
+            [data.issuer],
             data
         );
     }
