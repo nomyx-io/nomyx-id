@@ -183,7 +183,6 @@ class BlockchainService {
         const claimTopics = await this.parseClient.getRecords(
             'ClaimTopic', [], [], ["*"]
         );
-
         return claimTopics;
     }
 
@@ -309,9 +308,9 @@ class BlockchainService {
 
 
     async updateTrustedIssuer(data){
-        return await this.parseClient.updateExistingRecord(
+        return await this.parseClient.createOrUpdateRecord(
             'TrustedIssuer',
-            ['trustedIssuer'],
+            ['issuer'],
             [data.trustedIssuer],
             data
         );

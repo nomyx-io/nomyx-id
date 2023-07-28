@@ -102,8 +102,8 @@ const TrustedIssuersPage = ({ service }) => {
     };
 
     const columns = [
-        { label: "Trusted Issuer", name: "attributes?.issuer", width: "20%" },
-        { label: "Managed Claim Topics", name: "id", width: "65%" },
+        { label: "Trusted Issuer", name: "attributes.issuer", width: "20%" },
+        { label: "Managed Claim Topics", name: "attributes.claimTopics", width: "65%" },
     ];
 
     const actions = [

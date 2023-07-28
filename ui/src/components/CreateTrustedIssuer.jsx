@@ -30,7 +30,7 @@ function CreateTrustedIssuer({service}) {
 		const result = await service.updateTrustedIssuer({
             verifierName:verifierName+"",
 			trustedIssuer: trustedIssuer+"",
-			// claimTopics: selectedChips,
+			claimTopics: selectedChips,
 		});
 		console.log('updateTrustedIssuer result:',result);
 	};
