@@ -1,10 +1,49 @@
 import { Button, Input } from 'antd'
 import React from 'react'
 
-function CreateDigitalId() {
+let addedAddListener = false;
+
+function CreateDigitalId({ service }) {
     const [displayName, setDisplayName] = React.useState('')
     const [walletAddress, setWalletAddress] = React.useState('')
     const [accountNumber, setAccountNumber] = React.useState('')
+
+    const updateDigitalId = async () => {
+        console.log('updateDigitalId');
+
+        const result = await service.updateDigitalId(
+            {
+                displayName,
+                walletAddress,
+                accountNumber
+            }
+        );
+
+        console.log('updateDigitalId result:');
+        console.log(result);
+    }
+
+    const handleCreateDigitalId = async () => {
+        if (!addedAddListener) {
+
+            console.log('adding listener');
+
+            service.onIdentityAdded(async (walletAddress) => {
+
+                console.log('onDigitalIdentityAdded!');
+                console.log(walletAddress);
+                updateDigitalId(walletAddress);
+
+            });
+
+            addedAddListener = true;
+        }
+        let result = await service.createIdentity(walletAddress)
+        let identity = await service.getIdentity(walletAddress);
+        let newResult = await service.addIdentity(walletAddress, identity)
+        console.log(identity, newResult, 'New')
+    }
+
     return (
         <div >
             <p className='text-xl p-6'>Create Digital Id</p>
@@ -22,7 +61,7 @@ function CreateDigitalId() {
                     <div>
                         <p>Investor Wallet Address</p>
                         <div className='mt-2 relative w-full flex border rounded-lg'>
-                            <Input value={walletAddress} className='border w-full p-2 rounded-lg text-3xl' placeholder='Raw input' type='text' maxLength={32} onChange={(e) => setWalletAddress(e.target.value)} />
+                            <Input value={walletAddress} className='border w-full p-2 rounded-lg text-3xl' placeholder='Raw input' type='text' onChange={(e) => setWalletAddress(e.target.value)} />
                         </div>
                     </div>
                     <div className='mt-6'>
@@ -33,7 +72,7 @@ function CreateDigitalId() {
                     </div>
                 </div>
                 <div className='flex justify-end max-[600px]:justify-center'>
-                    <Button className='max-[600px]:w-[60%] min-w-max text-center font-semibold rounded h-11 bg-[#7F56D9] text-white'>Create Digital Id</Button>
+                    <Button onClick={handleCreateDigitalId} className='max-[600px]:w-[60%] min-w-max text-center font-semibold rounded h-11 bg-[#7F56D9] text-white'>Create Digital Id</Button>
                 </div>
             </div>
         </div>

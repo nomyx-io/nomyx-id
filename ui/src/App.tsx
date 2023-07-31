@@ -176,7 +176,7 @@ function App() {
 
 		  setIsConnected(true);
 
-		  const _blockchainService = new BlockchainService(provider, config.contract);
+		  const _blockchainService = new BlockchainService(provider, config.contract, config.identityFactory);
 		  setBlockchainService(_blockchainService);
 	  });
   };
@@ -246,9 +246,9 @@ function App() {
 							<Route path="/claims" element={<ClaimsPage service={blockchainService} />} />
 							<Route path="/claims/edit" element={<EditClaim service={blockchainService} />} />
 							<Route path="/login" element={<Login />} />
-							<Route path="/identities/create" element={<CreateDigitalId />} />
-              <Route path="/identities/:selectedId" element={<DigitalIdentityDetailView />} />
-          		<Route path="/issuers/create" element={<CreateTrustedIssuer />} />
+							<Route path="/identities/create" element={<CreateDigitalId service={blockchainService} />} />
+              				<Route path="/identities/:selectedId" element={<DigitalIdentityDetailView service={blockchainService} />} />
+          					<Route path="/issuers/create" element={<CreateTrustedIssuer />} />
 							<Route path="/topics/create" element={<CreateClaimTopic  service={blockchainService} />} />
 						</Routes>
 					</div>
