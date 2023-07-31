@@ -3,9 +3,22 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { ClaimCard } from './ClaimCard'
 
-function DigitalIdentityDetailView() {
+function DigitalIdentityDetailView({ service }) {
     const [displayName, setDisplayName] = React.useState('')
     const { selectedId } = useParams()
+
+    React.useEffect(() => {
+        getData()
+    }, [])
+
+    const getData = async () => {
+        if (service) {
+            let result = await service.getDigitalIdentity()
+            console.log(result, "getDigitalIds data result")
+            return result
+        }
+    }
+
 
     const CardData = [
         {
