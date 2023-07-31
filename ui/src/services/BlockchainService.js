@@ -3,21 +3,26 @@ import { ethers } from "ethers";
 import * as ClaimTopicsRegistry from "../abi/IClaimTopicsRegistry.json";
 import * as IdentityRegistry from "../abi/IIdentityRegistry.json";
 import * as TrustedIssuersRegistry from '../abi/ITrustedIssuersRegistry.json';
+import * as IdentityFactory from "../abi/IdentityFactory.json"
 import ParseClient from './ParseClient.ts';
 
 class BlockchainService {
     claimTopicsAbi = ClaimTopicsRegistry.default.abi;
     identityRegistryAbi = IdentityRegistry.default.abi;
     trustedIssuersRegistryAbi = TrustedIssuersRegistry.default.abi;
+    identityFactoryAbi = IdentityFactory.default.abi;
     parseClient = ParseClient;
 
-    constructor(provider, contractAddress) {
+    constructor(provider, contractAddress, identityFactory) {
 
         console.log("provider:");
         console.log(provider);
 
         console.log("contractAddress:");
         console.log(contractAddress);
+
+        console.log("identityFactory")
+        console.log(identityFactory)
 
         // this.provider = new ethers.providers.JsonRpcProvider(provider);
         this.provider = provider;
@@ -26,6 +31,7 @@ class BlockchainService {
         this.claimTopicRegistryService = new ethers.Contract(contractAddress, this.claimTopicsAbi, this.provider);
         this.identityRegistryService = new ethers.Contract(contractAddress, this.identityRegistryAbi, this.provider);
         this.trustedIssuersRegistryService = new ethers.Contract(contractAddress, this.trustedIssuersRegistryAbi, this.provider);
+        this.identityFactoryService = new ethers.Contract(identityFactory, this.identityFactoryAbi, this.provider);
 
         // Claim Topics Registry
         this.addClaimTopic = this.addClaimTopic.bind(this);
@@ -36,6 +42,9 @@ class BlockchainService {
         this.addIdentity = this.addIdentity.bind(this);
         this.batchAddIdentity = this.batchAddIdentity.bind(this);
         this.removeIdentity = this.removeIdentity.bind(this);
+        this.createIdentity = this.createIdentity.bind(this);
+        this.updateIdentity = this.updateIdentity.bind(this);
+        this.getDigitalIdentity = this.getDigitalIdentity.bind(this);
         this.addClaim = this.addClaim.bind(this);
         this.removeClaim = this.removeClaim.bind(this);
         this.contains = this.contains.bind(this);
@@ -131,17 +140,17 @@ class BlockchainService {
         });
     }
 
-/*    onClaimAdded(callback) {
-        this.trustedIssuersRegistryService.on("ClaimAdded", (identity, claimTopic, claim) => {
-            callback(identity, claimTopic, claim);
-        });
-    }
-
-    onClaimRemoved(callback) {
-        this.trustedIssuersRegistryService.on("ClaimRemoved", (identity, claimTopic) => {
-            callback(identity, claimTopic);
-        });
-    }*/
+    /*    onClaimAdded(callback) {
+            this.trustedIssuersRegistryService.on("ClaimAdded", (identity, claimTopic, claim) => {
+                callback(identity, claimTopic, claim);
+            });
+        }
+    
+        onClaimRemoved(callback) {
+            this.trustedIssuersRegistryService.on("ClaimRemoved", (identity, claimTopic) => {
+                callback(identity, claimTopic);
+            });
+        }*/
 
     onWalletLinked(callback) {
         this.trustedIssuersRegistryService.on("WalletLinked", (walletAddress, onchainID) => {
@@ -162,7 +171,7 @@ class BlockchainService {
         return await tx.wait();
     }
 
-    async updateClaimTopic(claimTopic){
+    async updateClaimTopic(claimTopic) {
         return await this.parseClient.updateExistingRecord(
             'ClaimTopic',
             ['topic'],
@@ -188,6 +197,29 @@ class BlockchainService {
     }
 
 
+    async createIdentity(identity) {
+        const contract = this.identityFactoryService.connect(this.signer);
+        const tx = await contract.createIdentity(identity);
+        await tx.wait();
+        return tx;
+    }
+
+    async getIdentity(address) {
+        const contract = this.identityFactoryService.connect(this.signer);
+        const tx = await contract.getIdentity(address);
+        return tx;
+    }
+
+    async getDigitalIdentity() {
+
+        const digitalId = await this.parseClient.getRecords(
+            'DigitalIdentity', [], [], ["*"]
+        );
+        console.log(digitalId, "digi id")
+
+        return digitalId;
+    }
+
     async addIdentity(identity, identityData) {
         const contract = this.identityRegistryService.connect(this.signer);
         const tx = await contract.addIdentity(identity, identityData);
@@ -207,6 +239,16 @@ class BlockchainService {
         const tx = await contract.removeIdentity(identity);
         await tx.wait();
         return tx;
+    }
+
+    async updateIdentity(identity, identityData) {
+
+        return await this.parseClient.updateExistingRecord(
+            'DigitalId',
+            ['Id'],
+            [identity],
+            identityData
+        );
     }
 
     async addClaim(identity, claimTopic, claim) {
