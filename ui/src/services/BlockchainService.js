@@ -308,7 +308,7 @@ class BlockchainService {
 
 
     async updateTrustedIssuer(data){
-        return await this.parseClient.createOrUpdateRecord(
+        return await this.parseClient.updateExistingRecord(
             'TrustedIssuer',
             ['issuer'],
             [data.issuer],
