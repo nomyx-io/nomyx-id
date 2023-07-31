@@ -85,9 +85,16 @@ const TrustedIssuersPage = ({ service }) => {
 
     useEffect(() => {
         async function fetchData() {
-            const issuers =  service.getTrustedIssuers && await service.getTrustedIssuers();
-            console.log('issuers',issuers);
-            issuers && setTrustedIssuers(issuers);
+            const issuers = service.getTrustedIssuers && await service.getTrustedIssuers();
+            let data = []
+            if (issuers) {
+                issuers.forEach((item) => {
+                    const claimTopicsString = item.attributes?.claimTopics?.join(",");
+                    data.push({ claimTopics: claimTopicsString, issuer: item.attributes.issuer })
+                });
+                console.log('issuers', data);
+                setTrustedIssuers(data);
+            }
         }
 
         fetchData();
@@ -102,8 +109,8 @@ const TrustedIssuersPage = ({ service }) => {
     };
 
     const columns = [
-        { label: "Trusted Issuer", name: "attributes.issuer", width: "20%" },
-        { label: "Managed Claim Topics", name: "attributes.claimTopics", width: "65%" },
+        { label: "Trusted Issuer", name: "issuer", width: "20%" },
+        { label: "Managed Claim Topics", name: "claimTopics", width: "65%" },
     ];
 
     const actions = [
