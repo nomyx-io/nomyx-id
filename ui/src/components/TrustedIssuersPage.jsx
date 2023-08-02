@@ -107,7 +107,6 @@ const TrustedIssuersPage = ({ service }) => {
 
     const actions = [
         { label: "Update Claim Topics", name: "update", confirmation: "You are about to do something. Do you wish to proceed?" },
-        { label: "View IDs", name: "View", confirmation: "You are about to do something. Do you wish to proceed?" }
     ];
     const globalActions = [
         { label: "Create Trusted Issuer", name: "create" }
