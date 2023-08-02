@@ -48,7 +48,7 @@ const IdentitiesPage = ({ service }) => {
     ];
 
     const actions = [
-        { label: "Add Claim", name: "add", confirmation: "You are about to do something. Do you wish to proceed?" },
+        { label: "Edit Claim", name: "edit", confirmation: "You are about to do something. Do you wish to proceed?" },
         { label: "View", name: "view", confirmation: "You are about to do something. Do you wish to proceed?" },
         { label: "Remove", name: "remove", confirmation: "You are about to do something. Do you wish to proceed?" }
     ];
