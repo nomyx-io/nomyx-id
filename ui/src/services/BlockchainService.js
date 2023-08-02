@@ -288,7 +288,8 @@ class BlockchainService {
     }
 
     async removeTrustedIssuer(trustedIssuer) {
-        const tx = await this.trustedIssuersRegistryService.removeTrustedIssuer(trustedIssuer);
+        const contract = this.trustedIssuersRegistryService.connect(this.signer);
+        const tx = await contract.removeTrustedIssuer(trustedIssuer);
         await tx.wait();
         return tx;
     }
