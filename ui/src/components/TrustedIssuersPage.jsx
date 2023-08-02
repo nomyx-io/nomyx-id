@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { List, Button, Modal, Checkbox, Form, InputNumber } from 'antd';
 import ObjectList from "./ObjectList";
+import { useNavigate } from "react-router-dom";
 
 const AddTrustedIssuerDialog = ({
     service,
@@ -78,6 +79,7 @@ const RemoveTrustedIssuerDialog = ({
 };
 
 const TrustedIssuersPage = ({ service }) => {
+    const navigate = useNavigate()
     const [trustedIssuers, setTrustedIssuers] = useState([]);
     const [selectedIssuer, setSelectedIssuer] = useState({});
     // modals visibility
@@ -85,8 +87,16 @@ const TrustedIssuersPage = ({ service }) => {
 
     useEffect(() => {
         async function fetchData() {
-            const issuers = await service.getTrustedIssuers && service.getTrustedIssuers();
-            setTrustedIssuers(issuers);
+            const issuers = service.getTrustedIssuers && await service.getTrustedIssuers();
+            let data = []
+            if (issuers) {
+                issuers.forEach((item) => {
+                    const claimTopicsString = item.attributes?.claimTopics?.join(",");
+                    data.push({ claimTopics: claimTopicsString, issuer: item.attributes.issuer })
+                });
+                console.log('issuers', data);
+                setTrustedIssuers(data);
+            }
         }
 
         fetchData();
@@ -101,8 +111,8 @@ const TrustedIssuersPage = ({ service }) => {
     };
 
     const columns = [
-        { label: "Trusted Issuer", name: "id", width: "20%" },
-        { label: "Managed Claim Topics", name: "claim_topics", width: "65%" },
+        { label: "Trusted Issuer", name: "issuer", width: "20%" },
+        { label: "Managed Claim Topics", name: "claimTopics", width: "65%" },
     ];
 
     const actions = [
@@ -115,20 +125,15 @@ const TrustedIssuersPage = ({ service }) => {
 
     const search = true;
 
-    const data = [];
-
-    for (let i = 1; i <= 200; i++) {
-        data.push({
-            id: i,
-            claim_topics: "Object " + i,
-            description: "This is object " + i,
-            status: "active"
-        });
-    };
-
-
     const handleAction = async (action, object) => {
         console.log(action, object);
+        switch (action) {
+            case 'create':
+                navigate('create')
+                break;
+            default:
+                break;
+        }
     }
 
     return (
@@ -140,7 +145,7 @@ const TrustedIssuersPage = ({ service }) => {
                 actions={actions}
                 globalActions={globalActions}
                 search={search}
-                data={data}
+                data={trustedIssuers}
                 pageSize={10}
                 onAction={handleAction}
                 onGlobalAction={handleAction}
