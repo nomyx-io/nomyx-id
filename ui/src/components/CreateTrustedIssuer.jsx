@@ -7,21 +7,29 @@ function CreateTrustedIssuer({ service }) {
 	const [verifierName, setVerifierName] = React.useState('');
 	const [walletAddress, setWalletAddress] = React.useState('');
 	const [claimTopics, setClaimTopics] = React.useState([]);
-	const [selectedChips, setSelectedChips] = React.useState([]);
 
-	const handleChipClick = (label) => {
-		if (selectedChips.includes(label)) {
-			setSelectedChips(selectedChips.filter((chip) => chip !== label));
-		} else {
-			setSelectedChips([...selectedChips, label]);
-		}
+	const [targetKeys, setTargetKeys] = React.useState([]);
+	const [selectedKeys, setSelectedKeys] = React.useState([]);
+
+
+	const onChange = (nextTargetKeys, direction, moveKeys) => {
+		setTargetKeys(nextTargetKeys);
+	};
+	const onSelectChange = (sourceSelectedKeys, targetSelectedKeys) => {
+		setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
 	};
 
 	useEffect(() => {
 		(async function () {
 			const result = await service.getClaimTopics();
-			console.log('result', result);
-			setClaimTopics(result);
+			let data = []
+			if (result) {
+				result.forEach((item) => {
+					data.push({ key: item.attributes.topic, displayName: item.attributes.displayName, id: item.id, topic: item.attributes.topic })
+				});
+				console.log('result', data);
+				setClaimTopics(data);
+			}
 		})();
 	}, [service]);
 
@@ -29,7 +37,7 @@ function CreateTrustedIssuer({ service }) {
 		console.log('updateTrustedIssuer', trustedIssuer, claimTopics);
 		const result = await service.updateTrustedIssuer({
 			verifierName: verifierName,
-			claimTopics: selectedChips,
+			claimTopics: targetKeys,
 			issuer: trustedIssuer
 		});
 		console.log('updateTrustedIssuer result:', result);
@@ -46,7 +54,7 @@ function CreateTrustedIssuer({ service }) {
 				});
 				addedAddListener = true;
 			}
-			let result = await service.addTrustedIssuer(walletAddress, selectedChips);
+			let result = await service.addTrustedIssuer(walletAddress, targetKeys);
 			console.log('addTrustedIssuer result:', result);
 		} catch (error) {
 			console.log("Error in adding trusted issuer", error);
@@ -72,18 +80,17 @@ function CreateTrustedIssuer({ service }) {
 					</div>
 					<p className='my-4'>Manage Claim Topic IDs</p>
 				</div>
-				<div className="flex flex-wrap gap-2">
-					{claimTopics &&
-						claimTopics.length > 0 &&
-						claimTopics.map((chip) => (
-							chip.attributes?.displayName && <Chip
-								key={chip.id}
-								label={chip.attributes?.displayName}
-								selected={selectedChips.includes(chip.attributes?.topic)}
-								onClick={() => handleChipClick(chip.attributes?.topic)}
-							/>
-						))}
-				</div>
+				<Transfer
+					showSelectAll={false}
+					dataSource={claimTopics}
+					titles={['Available Claims', 'Selected Claims']}
+					targetKeys={targetKeys}
+					selectedKeys={selectedKeys}
+					onChange={onChange}
+					onSelectChange={onSelectChange}
+					render={(item) => <div>{item?.displayName}({item.topic})</div>}
+				/>
+				<br />
 				<div className="flex justify-end max-[600px]:justify-center">
 					<Button
 						className="max-[600px]:w-[60%] min-w-max text-center font-semibold rounded h-11 bg-[#7F56D9] text-white"
@@ -96,15 +103,5 @@ function CreateTrustedIssuer({ service }) {
 		</div>
 	);
 }
-const Chip = ({ label, selected, onClick }) => {
-	return (
-		<button
-			className={`px-4 py-2 rounded-full ${selected ? 'bg-[#7F56D9] text-white' : 'bg-gray-300 text-gray-700'}`}
-			onClick={onClick}
-		>
-			{label}
-		</button>
-	);
-};
 
 export default CreateTrustedIssuer
