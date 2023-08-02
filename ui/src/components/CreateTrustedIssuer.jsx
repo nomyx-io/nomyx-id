@@ -1,9 +1,11 @@
 import { Button, Input } from 'antd';
 import React, { useEffect } from 'react';
 import { Transfer } from 'antd';
+import { useNavigate } from 'react-router-dom';
 let addedAddListener = false;
 
 function CreateTrustedIssuer({ service }) {
+	const navigate = useNavigate()
 	const [verifierName, setVerifierName] = React.useState('');
 	const [walletAddress, setWalletAddress] = React.useState('');
 	const [claimTopics, setClaimTopics] = React.useState([]);
@@ -41,6 +43,7 @@ function CreateTrustedIssuer({ service }) {
 			issuer: trustedIssuer
 		});
 		console.log('updateTrustedIssuer result:', result);
+		navigate('/issuers')
 	};
 
 	const saveTrustedIssuer = async () => {

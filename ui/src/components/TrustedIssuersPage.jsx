@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { List, Button, Modal, Checkbox, Form, InputNumber } from 'antd';
 import ObjectList from "./ObjectList";
+import { useNavigate } from "react-router-dom";
 
 const AddTrustedIssuerDialog = ({
     service,
@@ -78,6 +79,7 @@ const RemoveTrustedIssuerDialog = ({
 };
 
 const TrustedIssuersPage = ({ service }) => {
+    const navigate = useNavigate()
     const [trustedIssuers, setTrustedIssuers] = useState([]);
     const [selectedIssuer, setSelectedIssuer] = useState({});
     // modals visibility
@@ -125,6 +127,13 @@ const TrustedIssuersPage = ({ service }) => {
 
     const handleAction = async (action, object) => {
         console.log(action, object);
+        switch (action) {
+            case 'create':
+                navigate('create')
+                break;
+            default:
+                break;
+        }
     }
 
     return (
